@@ -1197,7 +1197,7 @@ public class MainController extends javax.swing.JFrame {
             bw.newLine();
             bw.newLine();
             bw.write(new StringBuilder("    ").append(getConnectionModifier)
-                    .append("Connection ").append(txtGetConnection.getText())
+                    .append("static ").append("Connection ").append(txtGetConnection.getText())
                     .append("() {").toString());
             bw.newLine();
             bw.newLine();
