@@ -1805,7 +1805,7 @@ public class MainController extends javax.swing.JFrame {
 
         if (chkAddJDBCDAO.isSelected()) {
             addMethod = new StringBuilder().append("\n    ")
-                    .append(addModifier).append("void persist(Object object) {\n")
+                    .append(addModifier).append("void persist(Object object) throws SQLException {\n")
                     .append("\tthis.conn = null; //TODO assign with getConnection();\n")
                     .append("\ttry {\n")
                     .append("\t    if (conn != null) {\n")
@@ -1814,9 +1814,6 @@ public class MainController extends javax.swing.JFrame {
                     .append("\t        prStm.setObject(1, object);\n")
                     .append("\t        prStm.executeUpdate();\n")
                     .append("            }\n")
-                    .append("\t} catch (SQLException e) {\n")
-                    .append("\t    System.out.println(\"Error at persist method of ")
-                    .append(txtClassNameJDBCDAO.getText()).append(": \" + e.getMessage());\n")
                     .append("\t} finally {\n")
                     .append("\t    closeConnection();\n")
                     .append("\t}\n")
@@ -1824,7 +1821,7 @@ public class MainController extends javax.swing.JFrame {
         }
         if (chkUpdateJDBCDAO.isSelected()) {
             updateMethod = new StringBuilder().append("\n    ")
-                    .append(updateModifier).append("void merge(Object object) {\n")
+                    .append(updateModifier).append("void merge(Object object) throws SQLException {\n")
                     .append("\tthis.conn = null; //TODO assign with getConnection();\n")
                     .append("\ttry {\n")
                     .append("\t    if (conn != null) {\n")
@@ -1835,9 +1832,6 @@ public class MainController extends javax.swing.JFrame {
                     .append("\t        prStm.setObject(2, object);\n")
                     .append("\t        prStm.executeUpdate();\n")
                     .append("            }\n")
-                    .append("\t} catch (SQLException e) {\n")
-                    .append("\t    System.out.println(\"Error at merge method of ")
-                    .append(txtClassNameJDBCDAO.getText()).append(": \" + e.getMessage());\n")
                     .append("\t} finally {\n")
                     .append("\t    closeConnection();\n")
                     .append("\t}\n")
@@ -1845,7 +1839,7 @@ public class MainController extends javax.swing.JFrame {
         }
         if (chkRemoveJDBCDAO.isSelected()) {
             deleteMethod = new StringBuilder("\n    ").append(removeModifier)
-                    .append("void remove(Object object) {\n")
+                    .append("void remove(Object object) throws SQLException {\n")
                     .append("\tthis.conn = null; //TODO assign with getConnection();\n")
                     .append("\ttry {\n")
                     .append("\t    if (conn != null) {\n")
@@ -1855,9 +1849,6 @@ public class MainController extends javax.swing.JFrame {
                     .append("\t        prStm.setObject(1, object);\n")
                     .append("\t        prStm.executeUpdate();\n")
                     .append("            }\n")
-                    .append("\t} catch (SQLException e) {\n")
-                    .append("\t    System.out.println(\"Error at remove method of ")
-                    .append(txtClassNameJDBCDAO.getText()).append(": \" + e.getMessage());\n")
                     .append("\t} finally {\n")
                     .append("\t    closeConnection();\n")
                     .append("\t}\n")
@@ -1865,7 +1856,7 @@ public class MainController extends javax.swing.JFrame {
         }
         if (chkFindJDBCDAO.isSelected()) {
             findMethod = new StringBuilder("\n    ").append(findModifier)
-                    .append("Object get(Object object) {\n")
+                    .append("Object get(Object object) throws SQLException {\n")
                     .append("\tthis.conn = null; //TODO assign with getConnection();\n")
                     .append("\tObject obj = null; //TODO change the object type\n")
                     .append("\ttry {\n")
@@ -1880,9 +1871,6 @@ public class MainController extends javax.swing.JFrame {
                     .append("\t\t    obj = rs.getObject(\"TODO-SELECTED\");\n")
                     .append("\t        }\n")
                     .append("            }\n")
-                    .append("\t} catch (SQLException e) {\n")
-                    .append("\t    System.out.println(\"Error at find method of ")
-                    .append(txtClassNameJDBCDAO.getText()).append(": \" + e.getMessage());\n")
                     .append("\t} finally {\n")
                     .append("\t    closeConnection();\n")
                     .append("\t}\n")
@@ -1891,7 +1879,7 @@ public class MainController extends javax.swing.JFrame {
         }
         if (chkgetAllJDBCDAO.isSelected()) {
             getAllMethod = new StringBuilder().append("\n    ")
-                    .append(getAllModifier).append("List<Object> getAll(Object object) {\n")
+                    .append(getAllModifier).append("List<Object> getAll(Object object) throws SQLException {\n")
                     .append("\tthis.conn = null; //TODO assign with getConnection();\n")
                     .append("\tList<Object> list = null;\n")
                     .append("\ttry {\n")
@@ -1907,10 +1895,6 @@ public class MainController extends javax.swing.JFrame {
                     .append("\t\t    list.add(rs.getObject(\"TODO-SELECTED\"));\n")
                     .append("\t        }\n")
                     .append("            }\n")
-                    .append("\t} catch (SQLException e) {\n")
-                    .append("\t    System.out.println(\"Error at remove method of ")
-                    .append(txtClassNameJDBCDAO.getText())
-                    .append(": \" + e.getMessage());\n")
                     .append("\t} finally {\n")
                     .append("\t    closeConnection();\n")
                     .append("\t}\n")
