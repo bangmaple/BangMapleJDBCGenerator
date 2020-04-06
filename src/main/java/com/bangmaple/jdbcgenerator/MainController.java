@@ -1205,7 +1205,7 @@ public class MainController extends javax.swing.JFrame {
             bw.newLine();
             bw.write("\ttry {");
             bw.newLine();
-            bw.write("\t    Class.forName(\"com.microsoft.sqlserver.SQLServerDriver\");");
+            bw.write("\t    Class.forName(\"com.microsoft.sqlserver.jdbc.SQLServerDriver\");");
             bw.newLine();
             bw.write("\t    conn = DriverManager.getConnection(\"jdbc:sqlserver://");
             bw.write(new StringBuilder(txtIP.getText()).append(":")
