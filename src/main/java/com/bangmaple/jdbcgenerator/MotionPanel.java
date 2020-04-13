@@ -17,37 +17,38 @@ import javax.swing.JPanel;
  * @author bangmaple
  */
 public class MotionPanel extends JPanel {
+
     private Point initialClick;
     private final JFrame parent;
 
-    public MotionPanel(final JFrame parent){
-    this.parent = parent;
+    public MotionPanel(final JFrame parent) {
+        this.parent = parent;
+        mousePressedActionListener();
+        mouseEventActionListener();
+    }
 
-    addMouseListener(new MouseAdapter() {
-        @Override
-        public void mousePressed(MouseEvent e) {
-            initialClick = e.getPoint();
-            getComponentAt(initialClick);
-        }
-    });
+    private void mouseEventActionListener() {
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int thisX = parent.getLocation().x;
+                int thisY = parent.getLocation().y;
+                int xMoved = e.getX() - initialClick.x;
+                int yMoved = e.getY() - initialClick.y;
+                int X = thisX + xMoved;
+                int Y = thisY + yMoved;
+                parent.setLocation(X, Y);
+            }
+        });
+    }
 
-    addMouseMotionListener(new MouseMotionAdapter() {
-        @Override
-        public void mouseDragged(MouseEvent e) {
-
-            // get location of Window
-            int thisX = parent.getLocation().x;
-            int thisY = parent.getLocation().y;
-
-            // Determine how much the mouse moved since the initial click
-            int xMoved = e.getX() - initialClick.x;
-            int yMoved = e.getY() - initialClick.y;
-
-            // Move window to this position
-            int X = thisX + xMoved;
-            int Y = thisY + yMoved;
-            parent.setLocation(X, Y);
-        }
-    });
+    private void mousePressedActionListener() {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+                getComponentAt(initialClick);
+            }
+        });
     }
 }

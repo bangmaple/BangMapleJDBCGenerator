@@ -60,6 +60,11 @@ public class MainController extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         setTableColumnSize();
+        chkPublicAddActionListener();
+        chkFinalAddActionListener();
+    }
+
+    private void chkPublicAddActionListener() {
         chkPublic.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -70,6 +75,9 @@ public class MainController extends javax.swing.JFrame {
                 }
             }
         });
+    }
+
+    private void chkFinalAddActionListener() {
         chkFinal.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,12 +129,10 @@ public class MainController extends javax.swing.JFrame {
                 .getResource("/icons8_minus_18px_1.png")).getImage()
                 .getScaledInstance(18, 18, java.awt.Image.SCALE_SMOOTH));
         lblMin.setIcon(minIcon);
-
     }
 
     private void popupMenu() {
-        CutCopyPasteActionSupport support = new CutCopyPasteActionSupport();
-        support.setPopup(txtProjectName, txtClassNameJDBC,
+        new CutCopyPasteActionSupport().setPopup(txtProjectName, txtClassNameJDBC,
                 txtClassNameJDBCDAO, txtDBName, txtClassName,
                 txtClassNameJDBCDAO, txtPassword, txtUsername, txtPackageName,
                 txtExtendsDTO, txtImplementsDTO, txtGetConnection);
@@ -174,7 +180,6 @@ public class MainController extends javax.swing.JFrame {
         txtPassword = new javax.swing.JPasswordField();
         jLabel7 = new javax.swing.JLabel();
         txtDBName = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
         jPanel13 = new javax.swing.JPanel();
         txtClassNameJDBC = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -224,6 +229,12 @@ public class MainController extends javax.swing.JFrame {
         cbFindModifier = new javax.swing.JComboBox<>();
         cbRemoveModifier = new javax.swing.JComboBox<>();
         cbCloseConnectionModifier = new javax.swing.JComboBox<>();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel19 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel20 = new javax.swing.JLabel();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jLabel17 = new javax.swing.JLabel();
         lblMaxMin = new javax.swing.JLabel();
         lblMin = new javax.swing.JLabel();
         lblClose = new javax.swing.JLabel();
@@ -233,7 +244,6 @@ public class MainController extends javax.swing.JFrame {
         txtPackageName = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
         txtInfo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -431,7 +441,7 @@ public class MainController extends javax.swing.JFrame {
 
         jLabel7.setText("Database name:");
 
-        jLabel8.setText("(Leave blank for 'master')");
+        txtDBName.setText("master");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -454,18 +464,14 @@ public class MainController extends javax.swing.JFrame {
                     .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtIP, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                     .addComponent(txtDBName))
-                .addGap(46, 46, 46)
+                .addGap(61, 61, 61)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel4))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtPort, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-                            .addComponent(txtPassword))))
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtPort, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                    .addComponent(txtPassword))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -486,8 +492,7 @@ public class MainController extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(txtDBName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(txtDBName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -946,6 +951,52 @@ public class MainController extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("JDBC DAO", jPanel6);
 
+        jLabel19.setText("Language:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "en-US", "vi-VN" }));
+
+        jLabel20.setText("Theme:");
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dark Mode", "White Mode", "Ocean Mode" }));
+
+        jLabel17.setText("<html>fb.com/BangMaple<br/>github.com/BangMaple</html>");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel19)
+                            .addComponent(jLabel20))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jComboBox2, 0, 125, Short.MAX_VALUE))))
+                .addContainerGap(513, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(356, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Preferences", jPanel5);
+
         lblMaxMin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblMaxMinMouseClicked(evt);
@@ -987,8 +1038,6 @@ public class MainController extends javax.swing.JFrame {
 
         jLabel13.setText("Project path:");
 
-        jLabel17.setText("<html>fb.com/BangMaple<br/>github.com/BangMaple</html>");
-
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
@@ -1000,8 +1049,6 @@ public class MainController extends javax.swing.JFrame {
                         .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(lblLogoJDBC, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, 0)
@@ -1036,11 +1083,7 @@ public class MainController extends javax.swing.JFrame {
                             .addContainerGap()
                             .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
                         .addComponent(lblLogoJDBC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                    .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addComponent(jTabbedPane1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1069,65 +1112,41 @@ public class MainController extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean closeDBConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+                return true;
+            } catch (SQLException ex) {
+                return false;
+            }
+        }
+        return false;
+    }
+
     private boolean checkDBConnection() {
         Connection conn = null;
-        boolean check = false;
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             conn = DriverManager.getConnection(new StringBuilder("jdbc:sqlserver://")
                     .append(txtIP.getText()).append(":").append(txtPort.getText())
                     .append(";databaseName=").append(txtDBName.getText())
                     .append(";username=").append(txtUsername.getText())
-                    .append(";password=").append(txtPassword.getText()).toString());
-            if (conn != null) {
-                check = true;
-            }
+                    .append(";password=")
+                    .append(txtPassword.getPassword()).toString());
         } catch (SQLException | ClassNotFoundException e) {
-            check = false;
-        } finally {
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (SQLException ex) {
-                    check = false;
-                }
-            }
         }
-        return check;
+        return closeDBConnection(conn);
     }
 
-    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        // TODO add your handling code here:
-        if (validateConnection()) {
-            if (checkDBConnection()) {
-                txtInfo.setText("(+) Successfully connected to the given database name.");
-            } else {
-                txtInfo.setText("(-) Failed to connect to the given database name.");
-                JOptionPane.showMessageDialog(this, new StringBuilder("Trying to ")
-                        .append("connect to database failed!\n")
-                        .append("Please try to leave the database name blank to ")
-                        .append("use the default database or check again\n")
-                        .append("the IP Address and the port. Even the username ")
-                        .append("and password must be correct.\n")
-                        .append("If this happen again, please check if you already ")
-                        .append("opened the IP forwarding in SQL Server ")
-                        .append("Configuration Wizard.").toString(),
-                        new StringBuilder("Error while connecting ")
-                                .append("to database").toString(), JOptionPane.ERROR_MESSAGE);
+    private void closeBufferedWriter(final BufferedWriter bw) {
+        try {
+            if (bw != null) {
+                bw.close();
             }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error while generating class file.", "Error while generating class", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnConnectActionPerformed
-    private class MyFileChooser extends JFileChooser {
-
-        public MyFileChooser(String path) {
-            super(path);
-        }
-
-        @Override
-        public JDialog createDialog(Component parent) throws HeadlessException {
-            return super.createDialog(parent);
-        }
-
     }
 
     private void generateJDBCUtils() {
@@ -1135,7 +1154,9 @@ public class MainController extends javax.swing.JFrame {
         String implementsSerializable = "";
         String serializable = "";
         String finalModifier = "";
-        String getConnectionModifier = cbGetConnection.getModel().getSelectedItem() + " ";
+        String getConnectionModifier = new StringBuilder(
+                String.valueOf(cbGetConnection.getModel().getSelectedItem()))
+                .append(" ").toString();
         if (getConnectionModifier.equals("<default> ")) {
             getConnectionModifier = "";
         }
@@ -1164,15 +1185,7 @@ public class MainController extends javax.swing.JFrame {
                             .append(SYSTEM_SLASH).append(txtClassNameJDBC.getText()
                             .trim()).append(".java").toString()));
             bw.newLine();
-            bw.write("/**");
-            bw.newLine();
-            bw.write(" * This class was generated by BangMaple Class Generator");
-            bw.newLine();
-            bw.write(new StringBuilder(" * Date: ").append(
-                    new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()))
-                    .toString());
-            bw.newLine();
-            bw.write(" */");
+            generateBangMapleIntroductionText(bw);
             if (HAVE_A_PACKAGE_NAME) {
                 bw.newLine();
                 bw.write(new StringBuilder("package ")
@@ -1212,7 +1225,7 @@ public class MainController extends javax.swing.JFrame {
                     .append(txtPort.getText()).append(";databaseName=")
                     .append(txtDBName.getText()).append(";username=")
                     .append(txtUsername.getText()).append(";password=")
-                    .append(txtPassword.getText()).append("\");").toString());
+                    .append(txtPassword.getPassword()).append("\");").toString());
             bw.newLine();
             bw.write("\t} catch (SQLException | ClassNotFoundException e) {");
             bw.newLine();
@@ -1230,23 +1243,17 @@ public class MainController extends javax.swing.JFrame {
             bw.newLine();
             JOptionPane.showMessageDialog(this, "Successfully generated this java class file.");
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error while generating class file.", "Error while generating class", JOptionPane.ERROR_MESSAGE);
+            errorGeneratingClassMessage();
         } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error while generating class file.", "Error while generating class", JOptionPane.ERROR_MESSAGE);
-            }
+            closeBufferedWriter(bw);
         }
     }
 
-    private void getDataFromDTOTable(final List<String> varList,
-            final List<String> attributeList, final List<String> getterList,
-            final List<String> setterList, final List<String> constructorList) {
-        DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-        for (int i = 0; i < tblModel.getRowCount(); i++) {
+    private List<String> getDataFromDTOTableToVarList() {
+        final DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
+        int rowCount = tblModel.getRowCount();
+        List<String> varList = new ArrayList<>(3);
+        for (int i = 0; i < rowCount; i++) {
             if (tblModel.getValueAt(i, 2) == null) {
                 break;
             }
@@ -1261,37 +1268,54 @@ public class MainController extends javax.swing.JFrame {
             var = new StringBuilder(var).append(" ").append(tblModel.getValueAt(i, 5)).toString();
             varList.add(var);
         }
-        for (int i = 0; i < varList.size(); i++) {
+        return varList;
+    }
+
+    private String generateGetterDataFromDTOTable(final String type, final String name) {
+        return new StringBuilder("\n    public ").append(type).append(" get")
+                .append(name.substring(0, 1).toUpperCase())
+                .append(name.substring(1)).append("() {\n").append("\treturn ")
+                .append(name).append(";\n").append("    }\n").toString();
+    }
+
+    private String generateSetterDataFromDTOTable(final String type, final String name) {
+        return new StringBuilder("\n    public void set")
+                .append(name.substring(0, 1).toUpperCase())
+                .append(name.substring(1)).append("(").append(type).append(" ")
+                .append(name).append(") {\n").append("\tthis.").append(name)
+                .append(" = ").append(name).append(";\n").append("    }\n")
+                .toString();
+    }
+
+    private List<String>[] getDataFromDTOTable() {
+        List<String> varList = getDataFromDTOTableToVarList();
+        int size = varList.size();
+        List<String> attributeList = new ArrayList<>();
+        List<String> getterList = new ArrayList<>();
+        List<String> setterList = new ArrayList<>();
+        List<String> constructorList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
             StringTokenizer stk = new StringTokenizer(varList.get(i), " ");
             while (stk.hasMoreTokens()) {
-                String getter = "";
-                String setter = "";
-                String var = "";
+                String getter = null;
+                String setter = null;
+                String var = null;
                 if (stk.countTokens() == 6) {
-                    var = new StringBuilder(var).append(stk.nextToken())
-                            .append(" ").toString();
+                    var = new StringBuilder(stk.nextToken()).append(" ").toString();
                 }
                 String type = stk.nextToken();
                 String name = stk.nextToken();
-                var = new StringBuilder(var).append(type).append(" ")
-                        .append(name).append(";").toString();
-                if (stk.nextToken().equals("true")) {
-                    getter = new StringBuilder(getter).append("\n    public ")
-                            .append(type).append(" get")
-                            .append(name.substring(0, 1).toUpperCase())
-                            .append(name.substring(1)).append("() {\n")
-                            .append("\treturn ").append(name).append(";\n")
-                            .append("    }\n").toString();
+                if (var == null) {
+                    var = "";
                 }
+                var = new StringBuilder(var).append(type).append(" ").append(name)
+                        .append(";").toString();
                 if (stk.nextToken().equals("true")) {
-                    setter = new StringBuilder(setter)
-                            .append("\n    public void set")
-                            .append(name.substring(0, 1).toUpperCase())
-                            .append(name.substring(1)).append("(")
-                            .append(type).append(" ").append(name).append(") {\n")
-                            .append("\tthis.").append(name).append(" = ")
-                            .append(name).append(";\n")
-                            .append("    }\n").toString();
+                    getter = generateGetterDataFromDTOTable(type, name);
+                }
+
+                if (stk.nextToken().equals("true")) {
+                    setter = generateSetterDataFromDTOTable(type, name);
                 }
                 attributeList.add(var);
                 getterList.add(getter);
@@ -1301,12 +1325,14 @@ public class MainController extends javax.swing.JFrame {
                 }
             }
         }
+        return new List[]{attributeList, getterList, setterList, constructorList};
     }
 
     private String getGetterDTO(final List<String> getterList) {
         String getter = "";
-        if (getterList.size() > 0) {
-            for (int i = 0; i < getterList.size(); i++) {
+        int size = getterList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
                 getter = new StringBuilder(getter).append(getterList.get(i)).toString();
             }
         }
@@ -1315,8 +1341,9 @@ public class MainController extends javax.swing.JFrame {
 
     private String getSetterDTO(final List<String> setterList) {
         String setter = "";
-        if (setterList.size() > 0) {
-            for (int i = 0; i < setterList.size(); i++) {
+        int size = setterList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
                 setter = new StringBuilder(setter).append(setterList.get(i)).toString();
             }
         }
@@ -1325,38 +1352,41 @@ public class MainController extends javax.swing.JFrame {
 
     private String getAttributesDTO(final List<String> attributeList) {
         String var = "";
-        for (int i = 0; i < attributeList.size(); i++) {
-            var = new StringBuilder(var).append("    ")
-                    .append(attributeList.get(i)).append("\n").toString();
+        int size = attributeList.size();
+        for (int i = 0; i < size; i++) {
+            var = new StringBuilder(var).append("    ").append(attributeList.get(i))
+                    .append("\n").toString();
         }
         return var;
     }
 
     private String getConstructorDTO(final List<String> constructorList) {
+        final String className = txtClassName.getText().trim();
         String constructor = new StringBuilder("    public ")
-                .append(txtClassName.getText()).append("(").toString();
-        if (constructorList.size() > 0) {
-            for (int i = 0; i < constructorList.size(); i++) {
-                if (i != constructorList.size() - 1) {
+                .append(className).append("(").toString();
+        int size = constructorList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                String str = constructorList.get(i);
+                if (i != (size - 1)) {
                     constructor = new StringBuilder(constructor)
-                            .append(constructorList.get(i)).append(", ").toString();
+                            .append(str).append(", ").toString();
                 } else {
                     constructor = new StringBuilder(constructor)
-                            .append(constructorList.get(i)).toString();
+                            .append(str).toString();
                 }
             }
             constructor = new StringBuilder(constructor).append(") {\n").toString();
-            for (int i = 0; i < constructorList.size(); i++) {
-                String testVar = constructorList.get(i)
-                        .substring(constructorList.get(i).lastIndexOf(" ") + 1,
-                                constructorList.get(i).length());
+            for (int i = 0; i < size; i++) {
+                String str = constructorList.get(i);
+                String testVar = str.substring(str.lastIndexOf(" ") + 1, str.length());
                 constructor = new StringBuilder(constructor).append("\tthis.")
                         .append(testVar).append(" = ").append(testVar)
                         .append(";\n").toString();
             }
             constructor = new StringBuilder(constructor).append("    }\n\n")
-                    .append("    public ").append(txtClassName.getText())
-                    .append("() {\n").append("    }").toString();
+                    .append("    public ").append(className).append("() {\n")
+                    .append("    }").toString();
 
         } else {
             constructor = new StringBuilder(constructor).append(") {\n")
@@ -1366,26 +1396,23 @@ public class MainController extends javax.swing.JFrame {
     }
 
     private void generateDTO() {
-        List<String> varList = new ArrayList<>();
-        List<String> attributeList = new ArrayList<>();
-        List<String> getterList = new ArrayList<>();
-        List<String> setterList = new ArrayList<>();
-        List<String> constructorList = new ArrayList<>();
-
-        getDataFromDTOTable(varList, attributeList, getterList, setterList, constructorList);
+        List<String>[] list = getDataFromDTOTable();
+        List<String> attributeList = list[0];
+        List<String> getterList = list[1];
+        List<String> setterList = list[2];
+        List<String> constructorList = list[3];
         String var = getAttributesDTO(attributeList);
         String getter = getGetterDTO(getterList);
         String setter = getSetterDTO(setterList);
         String constructor = getConstructorDTO(constructorList);
-
         String publicModifier = "";
         String implementsSerializable = "";
         String serializable = "";
         String finalModifier = "";
         String extendClass = "";
-
-        if (!txtExtendsDTO.getText().isEmpty()) {
-            extendClass = " extends " + txtExtendsDTO.getText().trim();
+        final String extendsDTOText = txtExtendsDTO.getText().trim();
+        if (!extendsDTOText.isEmpty()) {
+            extendClass = new StringBuilder(" extends ").append(extendsDTOText).toString();
         }
 
         if (chkPublicDTO.isSelected()) {
@@ -1395,17 +1422,18 @@ public class MainController extends javax.swing.JFrame {
             implementsSerializable = " implements Serializable";
             serializable = "import java.io.Serializable;";
         }
-        if (!txtImplementsDTO.getText().trim().isEmpty()) {
+        final String implementsDTOText = txtImplementsDTO.getText().trim();
+        if (!implementsDTOText.isEmpty()) {
             if (implementsSerializable.isEmpty()) {
                 implementsSerializable = " implements";
             }
-            if (txtImplementsDTO.getText().contains(",")) {
-
-                String[] split = txtImplementsDTO.getText().trim().split(",");
-                for (int i = 0; i < split.length; i++) {
+            if (implementsDTOText.contains(",")) {
+                String[] split = implementsDTOText.split(",");
+                int splitedImplDTOTextSize = split.length;
+                for (int i = 0; i < splitedImplDTOTextSize; i++) {
                     if (i == 0 && serializable.isEmpty()) {
-                        implementsSerializable = new StringBuilder(implementsSerializable).append(" ")
-                                .append(split[i].trim()).toString();
+                        implementsSerializable = new StringBuilder(implementsSerializable)
+                                .append(" ").append(split[i].trim()).toString();
                     } else {
                         implementsSerializable = new StringBuilder(implementsSerializable)
                                 .append(", ").append(split[i].trim()).toString();
@@ -1413,9 +1441,11 @@ public class MainController extends javax.swing.JFrame {
                 }
             } else {
                 if (!serializable.isEmpty()) {
-                    implementsSerializable += ", " + txtImplementsDTO.getText().trim();
+                    implementsSerializable = new StringBuilder(implementsSerializable)
+                            .append(", ").append(implementsDTOText).toString();
                 } else {
-                    implementsSerializable += txtImplementsDTO.getText().trim();
+                    implementsSerializable = new StringBuilder(implementsSerializable)
+                            .append(implementsDTOText).toString();
                 }
             }
         }
@@ -1424,41 +1454,37 @@ public class MainController extends javax.swing.JFrame {
         }
         BufferedWriter bw = null;
         String packagePathName = "";
-        if (!txtPackageName.getText().trim().isEmpty()) {
-            packagePathName = txtPackageName.getText().trim().replace(".", SYSTEM_SLASH);
+        final String packageName = txtPackageName.getText().trim();
+        if (!packageName.isEmpty()) {
+            packagePathName = packageName.replace(".", SYSTEM_SLASH);
         }
         File path = new File(new StringBuilder(SAVE_FILE_PATH)
                 .append(packagePathName).toString());
         if (!path.isDirectory()) {
             path.mkdirs();
         }
+        final String className = txtClassName.getText().trim();
         try {
-            bw = new BufferedWriter(new PrintWriter(new StringBuilder(SAVE_FILE_PATH)
+            final String classGeneratingPath = new StringBuilder(SAVE_FILE_PATH)
                     .append(packagePathName).append(SYSTEM_SLASH)
-                    .append(txtClassName.getText().trim()).append(".java").toString()));
+                    .append(className).append(".java").toString();
+            bw = new BufferedWriter(new PrintWriter(classGeneratingPath));
             bw.newLine();
-            bw.write("/**");
-            bw.newLine();
-            bw.write(" * This class was generated by BangMaple Class Generator");
-            bw.newLine();
-            bw.write(new StringBuilder(" * Date: ").append(new SimpleDateFormat(
-                    "dd/MM/yyyy HH:mm:ss").format(new Date())).toString());
-            bw.newLine();
-            bw.write(" */");
+            generateBangMapleIntroductionText(bw);
             if (HAVE_A_PACKAGE_NAME) {
                 bw.newLine();
                 bw.write(new StringBuilder("package ")
                         .append(txtPackageName.getText().trim()).append(";").toString());
                 bw.newLine();
             }
-            bw.newLine();
             if (!implementsSerializable.isEmpty()) {
+                bw.newLine();
                 bw.write(serializable);
                 bw.newLine();
             }
             bw.newLine();
             bw.write(new StringBuilder(publicModifier).append(finalModifier)
-                    .append("class ").append(txtClassName.getText()).append(extendClass)
+                    .append("class ").append(className).append(extendClass)
                     .append(implementsSerializable).append(" {").toString());
             bw.newLine();
             bw.write(new StringBuilder("\n").append(var).toString());
@@ -1466,25 +1492,32 @@ public class MainController extends javax.swing.JFrame {
             bw.write(constructor);
             bw.newLine();
             bw.write(getter);
-            bw.newLine();
             bw.write(setter);
             bw.newLine();
             bw.write("}");
             bw.newLine();
             JOptionPane.showMessageDialog(this, "Successfully generated this java class file.");
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error while generating class file.",
-                    "Error while generating class", JOptionPane.ERROR_MESSAGE);
+            errorGeneratingClassMessage();
         } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error while generating class file.",
-                        "Error while generating class", JOptionPane.ERROR_MESSAGE);
-            }
+            closeBufferedWriter(bw);
         }
+    }
+
+    private void errorGeneratingClassMessage() {
+        JOptionPane.showMessageDialog(this, "Error while generating class file.",
+                "Error while generating class", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void generateBangMapleIntroductionText(final BufferedWriter bw) throws IOException {
+        bw.write("/**");
+        bw.newLine();
+        bw.write(" * This class was generated by BangMaple Class Generator");
+        bw.newLine();
+        bw.write(new StringBuilder(" * Date: ").append(new SimpleDateFormat(
+                "dd/MM/yyyy HH:mm:ss").format(new Date())).toString());
+        bw.newLine();
+        bw.write(" */");
     }
 
     private void chooseSaveDialogStrategy(final MyFileChooser chooser, final String type) {
@@ -1508,10 +1541,7 @@ public class MainController extends javax.swing.JFrame {
 
     }
 
-    private void initSaveDialog(String type) {
-        MyFileChooser chooser = new MyFileChooser(".");
-        chooseSaveDialogStrategy(chooser, type);
-        final JDialog dialog = chooser.createDialog(null);
+    private void addSaveDialogActionListener(MyFileChooser chooser, JDialog dialog) {
         chooser.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -1535,51 +1565,25 @@ public class MainController extends javax.swing.JFrame {
                 }
             }
         });
+    }
 
+    private void addDialogWindowListener(JDialog dialog) {
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 dialog.setVisible(false);
             }
         });
+    }
 
+    private void initSaveDialog(String type) {
+        MyFileChooser chooser = new MyFileChooser(".");
+        chooseSaveDialogStrategy(chooser, type);
+        final JDialog dialog = chooser.createDialog(null);
+        addSaveDialogActionListener(chooser, dialog);
+        addDialogWindowListener(dialog);
         dialog.setVisible(true);
     }
-
-    private boolean validateJDBCUtilsData() {
-        if (txtClassNameJDBC.getText().matches("^[\\_a-zA-Z0-9]{1,255}$")) {
-            if (txtClassNameJDBC.getText().substring(0, 1).matches("^[0-9]$")
-                    || txtClassNameJDBC.getText().substring(0, 1).matches("^[\\.]$")) {
-                JOptionPane.showMessageDialog(this, new StringBuilder("Can't generate due to class name is not valid!\n")
-                        .append("The first letter must not a number.").toString());
-                return false;
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Can't generate due to class name is not valid!");
-            return false;
-        }
-        if (txtGetConnection.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "getConnection method name musn't be blank!");
-            return false;
-        } else {
-            if (!txtGetConnection.getText().trim().matches("^[a-zA-Z0-9]{1,}$")
-                    || String.valueOf(txtGetConnection.getText().charAt(0)).matches("^[0-9]$")) {
-                JOptionPane.showMessageDialog(this, "Please follow the correct method name format.");
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void btnChooseProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseProjectActionPerformed
-        if (!validateConnection()) {
-            return;
-        }
-        if (!validateJDBCUtilsData()) {
-            return;
-        }
-        selectProjectPath("jdbcUtils");
-    }//GEN-LAST:event_btnChooseProjectActionPerformed
 
     private void setSaveFilePath(boolean check, String type) {
         if (!check) {
@@ -1611,7 +1615,6 @@ public class MainController extends javax.swing.JFrame {
                         generateJDBCUtils();
                         break;
                     case "jdbcDAO":
-                        System.out.println("dao");
                         generateJDBCDAO();
                         break;
                     case "dto":
@@ -1666,26 +1669,199 @@ public class MainController extends javax.swing.JFrame {
                 check = true;
             }
         }
-        System.out.println(check);
         setSaveFilePath(check, type);
     }
 
-    private boolean validateJDBCDAOClassName() {
-        if (txtClassNameJDBCDAO.getText().matches("^[\\_a-zA-Z0-9]{1,255}$")) {
-            if (txtClassNameJDBCDAO.getText().substring(0, 1).matches("^[0-9]$")
-                    || txtClassNameJDBCDAO.getText().substring(0, 1).matches("^[\\.]$")) {
-                JOptionPane.showMessageDialog(this, new StringBuilder("Can't generate due to class name is not valid!\n")
-                        .append("The first letter must not a number.").toString());
-                return false;
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Can't generate due to class name is not valid!");
-            return false;
-        }
-        return true;
+    private String generateGetterConnectionJDBCDAO(final String getter) {
+        return new StringBuilder(getter)
+                .append("\n    public Connection getConnection() {\n")
+                .append("\treturn conn;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateGetterPreparedStatementJDBCDAO(final String getter) {
+        return new StringBuilder(getter)
+                .append("\n    public PreparedStatement getPreparedStatement() {\n")
+                .append("\treturn prStm;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateGetterResultSetJDBCDAO(final String getter) {
+        return new StringBuilder(getter)
+                .append("\n    public ResultSet getResultSet() {\n")
+                .append("\treturn rs;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateSetterConnectionJDBCDAO(final String setter) {
+        return new StringBuilder(setter)
+                .append("\n    public void setConnection(Connection conn) {\n")
+                .append("\tthis.conn = conn;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateSetterPreparedStatementJDBCDAO(final String setter) {
+        return new StringBuilder(setter)
+                .append("\n    public void setPreparedStatement(PreparedStatement prStm) {\n")
+                .append("\tthis.prStm = prStm;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateSetterResultSetJDBCDAO(final String setter) {
+        return new StringBuilder(setter)
+                .append("\n    public void setResultSet(ResultSet rs) {\n")
+                .append("\tthis.rs = rs;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateAddMethodJDBCDAO(final String addModifier) {
+        return new StringBuilder().append("\n    ")
+                .append(addModifier).append("void persist(Object object) throws SQLException {\n")
+                .append("\tthis.conn = null; //TODO assign with getConnection();\n")
+                .append("\ttry {\n")
+                .append("\t    if (conn != null) {\n")
+                .append("\t        String sql = \"INSERT INTO TODO_TABLE VALUES(?)\";\n")
+                .append("\t        prStm = conn.prepareStatement(sql);\n")
+                .append("\t        prStm.setObject(1, object);\n")
+                .append("\t        prStm.executeUpdate();\n")
+                .append("            }\n")
+                .append("\t} finally {\n")
+                .append("\t    closeConnection();\n")
+                .append("\t}\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateUpdateMethodJDBCDAO(final String updateModifier) {
+        return new StringBuilder().append("\n    ")
+                .append(updateModifier).append("void merge(Object object) throws SQLException {\n")
+                .append("\tthis.conn = null; //TODO assign with getConnection();\n")
+                .append("\ttry {\n")
+                .append("\t    if (conn != null) {\n")
+                .append("\t        String sql = \"UPDATE TODO_TABLE SET TODO_VAR = ? WHERE TODO_VAR2 = ?\";\n")
+                .append("\t        prStm = conn.prepareStatement(sql);\n")
+                .append("\t        //TODO binding parameters\n")
+                .append("\t        prStm.setObject(1, object);\n")
+                .append("\t        prStm.setObject(2, object);\n")
+                .append("\t        prStm.executeUpdate();\n")
+                .append("            }\n")
+                .append("\t} finally {\n")
+                .append("\t    closeConnection();\n")
+                .append("\t}\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateRemoveMethodJDBCDAO(final String removeModifier) {
+        return new StringBuilder("\n    ").append(removeModifier)
+                .append("void remove(Object object) throws SQLException {\n")
+                .append("\tthis.conn = null; //TODO assign with getConnection();\n")
+                .append("\ttry {\n")
+                .append("\t    if (conn != null) {\n")
+                .append("\t        String sql = \"DELETE FROM TODO_TABLE WHERE TODO_VAR = ?\";\n")
+                .append("\t        prStm = conn.prepareStatement(sql);\n")
+                .append("\t        //TODO binding parameters\n")
+                .append("\t        prStm.setObject(1, object);\n")
+                .append("\t        prStm.executeUpdate();\n")
+                .append("            }\n")
+                .append("\t} finally {\n")
+                .append("\t    closeConnection();\n")
+                .append("\t}\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateFindMethodJDBCDAO(final String findModifier) {
+        return new StringBuilder("\n    ").append(findModifier)
+                .append("Object get(Object object) throws SQLException {\n")
+                .append("\tthis.conn = null; //TODO assign with getConnection();\n")
+                .append("\tObject obj = null; //TODO change the object type\n")
+                .append("\ttry {\n")
+                .append("\t    if (conn != null) {\n")
+                .append("\t        String sql = \"SELECT * FROM TODO_TABLE WHERE TODO_VAR = ?\";\n")
+                .append("\t        prStm = conn.prepareStatement(sql);\n")
+                .append("\t        //TODO binding parameters\n")
+                .append("\t        prStm.setObject(1, object);\n")
+                .append("\t        rs = prStm.executeQuery();\n")
+                .append("\t        if (rs.next()) {\n")
+                .append("\t\t    //TODO change the object type\n")
+                .append("\t\t    obj = rs.getObject(\"TODO-SELECTED\");\n")
+                .append("\t        }\n")
+                .append("            }\n")
+                .append("\t} finally {\n")
+                .append("\t    closeConnection();\n")
+                .append("\t}\n")
+                .append("\treturn obj;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateGetAllMethodJDBCDAO(final String getAllModifier) {
+        return new StringBuilder().append("\n    ")
+                .append(getAllModifier).append("List<Object> getAll(Object object) throws SQLException {\n")
+                .append("\tthis.conn = null; //TODO assign with getConnection();\n")
+                .append("\tList<Object> list = null;\n")
+                .append("\ttry {\n")
+                .append("\t    if (conn != null) {\n")
+                .append("\t        String sql = \"SELECT * FROM TODO_TABLE WHERE TODO_VAR = ?\";\n")
+                .append("\t        prStm = conn.prepareStatement(sql);\n")
+                .append("\t        //TODO binding parameters\n")
+                .append("\t        prStm.setObject(1, object);\n")
+                .append("\t        rs = prStm.executeQuery();\n")
+                .append("\t        list = new LinkedList();\n")
+                .append("\t        while (rs.next()) {\n")
+                .append("\t\t    //TODO change the object type\n")
+                .append("\t\t    list.add(rs.getObject(\"TODO-SELECTED\"));\n")
+                .append("\t        }\n")
+                .append("            }\n")
+                .append("\t} finally {\n")
+                .append("\t    closeConnection();\n")
+                .append("\t}\n")
+                .append("\treturn list;\n")
+                .append("    }\n").toString();
+    }
+
+    private String generateCloseConnectionJDBCDAO(final String closeConnectionModifier) {
+        return new StringBuilder("    ").append(closeConnectionModifier)
+                .append("void closeConnection() {\n")
+                .append("\ttry {\n").toString();
+    }
+
+    private String generateImportListAndLinkedList() {
+        return new StringBuilder("import java.util.List;\n")
+                .append("import java.util.LinkedList;").toString();
+    }
+
+    private String generateCloseConnectionConnectionMethodJDBCDAO(final String closeConnection) {
+        return new StringBuilder(closeConnection)
+                .append("\t    if (conn != null) {\n")
+                .append("\t        conn.close();\n")
+                .append("\t    }\n").toString();
+    }
+
+    private String generateCloseConnectionPreparedStatementMethodJDBCDAO(final String closeConnection) {
+        return new StringBuilder(closeConnection)
+                .append("\t    if (prStm != null) {\n")
+                .append("\t        prStm.close();\n")
+                .append("\t    }\n").toString();
+    }
+
+    private String generateCloseConnectionResultSetMethodJDBCDAO(final String closeConnection) {
+        return new StringBuilder(closeConnection)
+                .append("\t    if (rs != null) {\n")
+                .append("\t        rs.close();\n")
+                .append("\t    }\n").toString();
+    }
+
+    private String generateCloseConnectionCatchBlockJDBCDAO(final String closeConnection) {
+        return new StringBuilder(closeConnection)
+                .append("\t} catch (SQLException e) {\n")
+                .append("\t    System.out.println(\"Error at ")
+                .append(txtClassNameJDBCDAO.getText()).append(": \" + e.getMessage());\n")
+                .append("        }\n")
+                .append("    }\n").toString();
     }
 
     private void generateJDBCDAO() {
+        if (!validateJDBCDAOClassName()) {
+            return;
+        }
         String closeConnection = "";
         String importConnection = "";
         String importPreparedStatement = "";
@@ -1703,19 +1879,34 @@ public class MainController extends javax.swing.JFrame {
         String serializableModifier = "";
         String importListAndLinkedList = "";
 
-        String connectionModifier = cbConnectionModifier.getModel().getSelectedItem() + " ";
-        String preparedStatementModifier = cbPreparedStatementModifier.getModel().getSelectedItem() + " ";
-        String resultSetModifier = cbResultSetModifier.getModel().getSelectedItem() + " ";
-        String addModifier = cbAddModifier.getModel().getSelectedItem() + " ";
-        String findModifier = cbFindModifier.getModel().getSelectedItem() + " ";
-        String removeModifier = cbRemoveModifier.getModel().getSelectedItem() + " ";
-        String getAllModifier = cbGetAllModifier.getModel().getSelectedItem() + " ";
-        String updateModifier = cbUpdateModifier.getModel().getSelectedItem() + " ";
-        String closeConnectionModifier = cbCloseConnectionModifier.getModel().getSelectedItem() + " ";
+        String connectionModifier = new StringBuilder(
+                String.valueOf(cbConnectionModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String preparedStatementModifier = new StringBuilder(
+                String.valueOf(cbPreparedStatementModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String resultSetModifier = new StringBuilder(
+                String.valueOf(cbResultSetModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String addModifier = new StringBuilder(
+                String.valueOf(cbAddModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String findModifier = new StringBuilder(
+                String.valueOf(cbFindModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String removeModifier = new StringBuilder(
+                String.valueOf(cbRemoveModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String getAllModifier = new StringBuilder(
+                String.valueOf(cbGetAllModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String updateModifier = new StringBuilder(
+                String.valueOf(cbUpdateModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
+        String closeConnectionModifier = new StringBuilder(
+                String.valueOf(cbCloseConnectionModifier.getModel().getSelectedItem()))
+                .append(" ").toString();
 
-        if (!validateJDBCDAOClassName()) {
-            return;
-        }
         if (chkImplSerializable.isSelected()) {
             importSerializable = "import java.io.Serializable;";
             serializableModifier = "implements Serializable ";
@@ -1762,184 +1953,68 @@ public class MainController extends javax.swing.JFrame {
         }
 
         if (chkGetterConnectionJDBCDAO.isSelected()) {
-            getter = new StringBuilder(getter)
-                    .append("\n    public Connection getConnection() {\n")
-                    .append("\treturn conn;\n")
-                    .append("    }\n").toString();
+            getter = generateGetterConnectionJDBCDAO(getter);
         }
         if (chkGetterPreparedStatementJDBCDAO.isSelected()) {
-            getter = new StringBuilder(getter)
-                    .append("\n    public PreparedStatement getPreparedStatement() {\n")
-                    .append("\treturn prStm;\n")
-                    .append("    }\n").toString();
+            getter = generateGetterPreparedStatementJDBCDAO(getter);
         }
         if (chkGetterResultSetJDBCDAO.isSelected()) {
-            getter = new StringBuilder(getter)
-                    .append("\n    public ResultSet getResultSet() {\n")
-                    .append("\treturn rs;\n")
-                    .append("    }\n").toString();
+            getter = generateGetterResultSetJDBCDAO(getter);
         }
 
         if (chkgetAllJDBCDAO.isSelected()) {
-            importListAndLinkedList = new StringBuilder("import java.util.List;\n")
-                    .append("import java.util.LinkedList;").toString();
+            importListAndLinkedList = generateImportListAndLinkedList();
         }
         if (chkSetterConnectionJDBCDAO.isSelected()) {
-            setter = new StringBuilder(setter)
-                    .append("\n    public void setConnection(Connection conn) {\n")
-                    .append("\tthis.conn = conn;\n")
-                    .append("    }\n").toString();
+            setter = generateSetterConnectionJDBCDAO(setter);
         }
         if (chkSetterPreparedStatementJDBCDAO.isSelected()) {
-            setter = new StringBuilder(setter)
-                    .append("\n    public void setPreparedStatement(PreparedStatement prStm) {\n")
-                    .append("\tthis.prStm = prStm;\n")
-                    .append("    }\n").toString();
+            setter = generateSetterPreparedStatementJDBCDAO(setter);
         }
         if (chkSetterResultSetJDBCDAO.isSelected()) {
-            setter = new StringBuilder(setter)
-                    .append("\n    public void setResultSet(ResultSet rs) {\n")
-                    .append("\tthis.rs = rs;\n")
-                    .append("    }\n").toString();
+            setter = generateSetterResultSetJDBCDAO(setter);
         }
 
         if (chkAddJDBCDAO.isSelected()) {
-            addMethod = new StringBuilder().append("\n    ")
-                    .append(addModifier).append("void persist(Object object) throws SQLException {\n")
-                    .append("\tthis.conn = null; //TODO assign with getConnection();\n")
-                    .append("\ttry {\n")
-                    .append("\t    if (conn != null) {\n")
-                    .append("\t        String sql = \"INSERT INTO TODO_TABLE VALUES(?)\";\n")
-                    .append("\t        prStm = conn.prepareStatement(sql);\n")
-                    .append("\t        prStm.setObject(1, object);\n")
-                    .append("\t        prStm.executeUpdate();\n")
-                    .append("            }\n")
-                    .append("\t} finally {\n")
-                    .append("\t    closeConnection();\n")
-                    .append("\t}\n")
-                    .append("    }\n").toString();
+            addMethod = generateAddMethodJDBCDAO(addModifier);
         }
         if (chkUpdateJDBCDAO.isSelected()) {
-            updateMethod = new StringBuilder().append("\n    ")
-                    .append(updateModifier).append("void merge(Object object) throws SQLException {\n")
-                    .append("\tthis.conn = null; //TODO assign with getConnection();\n")
-                    .append("\ttry {\n")
-                    .append("\t    if (conn != null) {\n")
-                    .append("\t        String sql = \"UPDATE TODO_TABLE SET TODO_VAR = ? WHERE TODO_VAR2 = ?\";\n")
-                    .append("\t        prStm = conn.prepareStatement(sql);\n")
-                    .append("\t        //TODO binding parameters\n")
-                    .append("\t        prStm.setObject(1, object);\n")
-                    .append("\t        prStm.setObject(2, object);\n")
-                    .append("\t        prStm.executeUpdate();\n")
-                    .append("            }\n")
-                    .append("\t} finally {\n")
-                    .append("\t    closeConnection();\n")
-                    .append("\t}\n")
-                    .append("    }\n").toString();
+            updateMethod = generateUpdateMethodJDBCDAO(updateModifier);
         }
         if (chkRemoveJDBCDAO.isSelected()) {
-            deleteMethod = new StringBuilder("\n    ").append(removeModifier)
-                    .append("void remove(Object object) throws SQLException {\n")
-                    .append("\tthis.conn = null; //TODO assign with getConnection();\n")
-                    .append("\ttry {\n")
-                    .append("\t    if (conn != null) {\n")
-                    .append("\t        String sql = \"DELETE FROM TODO_TABLE WHERE TODO_VAR = ?\";\n")
-                    .append("\t        prStm = conn.prepareStatement(sql);\n")
-                    .append("\t        //TODO binding parameters\n")
-                    .append("\t        prStm.setObject(1, object);\n")
-                    .append("\t        prStm.executeUpdate();\n")
-                    .append("            }\n")
-                    .append("\t} finally {\n")
-                    .append("\t    closeConnection();\n")
-                    .append("\t}\n")
-                    .append("    }\n").toString();
+            deleteMethod = generateRemoveMethodJDBCDAO(removeModifier);
         }
         if (chkFindJDBCDAO.isSelected()) {
-            findMethod = new StringBuilder("\n    ").append(findModifier)
-                    .append("Object get(Object object) throws SQLException {\n")
-                    .append("\tthis.conn = null; //TODO assign with getConnection();\n")
-                    .append("\tObject obj = null; //TODO change the object type\n")
-                    .append("\ttry {\n")
-                    .append("\t    if (conn != null) {\n")
-                    .append("\t        String sql = \"SELECT * FROM TODO_TABLE WHERE TODO_VAR = ?\";\n")
-                    .append("\t        prStm = conn.prepareStatement(sql);\n")
-                    .append("\t        //TODO binding parameters\n")
-                    .append("\t        prStm.setObject(1, object);\n")
-                    .append("\t        rs = prStm.executeQuery();\n")
-                    .append("\t        if (rs.next()) {\n")
-                    .append("\t\t    //TODO change the object type\n")
-                    .append("\t\t    obj = rs.getObject(\"TODO-SELECTED\");\n")
-                    .append("\t        }\n")
-                    .append("            }\n")
-                    .append("\t} finally {\n")
-                    .append("\t    closeConnection();\n")
-                    .append("\t}\n")
-                    .append("\treturn obj;\n")
-                    .append("    }\n").toString();
+            findMethod = generateFindMethodJDBCDAO(findModifier);
         }
         if (chkgetAllJDBCDAO.isSelected()) {
-            getAllMethod = new StringBuilder().append("\n    ")
-                    .append(getAllModifier).append("List<Object> getAll(Object object) throws SQLException {\n")
-                    .append("\tthis.conn = null; //TODO assign with getConnection();\n")
-                    .append("\tList<Object> list = null;\n")
-                    .append("\ttry {\n")
-                    .append("\t    if (conn != null) {\n")
-                    .append("\t        String sql = \"SELECT * FROM TODO_TABLE WHERE TODO_VAR = ?\";\n")
-                    .append("\t        prStm = conn.prepareStatement(sql);\n")
-                    .append("\t        //TODO binding parameters\n")
-                    .append("\t        prStm.setObject(1, object);\n")
-                    .append("\t        rs = prStm.executeQuery();\n")
-                    .append("\t        list = new LinkedList();\n")
-                    .append("\t        while (rs.next()) {\n")
-                    .append("\t\t    //TODO change the object type\n")
-                    .append("\t\t    list.add(rs.getObject(\"TODO-SELECTED\"));\n")
-                    .append("\t        }\n")
-                    .append("            }\n")
-                    .append("\t} finally {\n")
-                    .append("\t    closeConnection();\n")
-                    .append("\t}\n")
-                    .append("\treturn list;\n")
-                    .append("    }\n").toString();
+            getAllMethod = generateGetAllMethodJDBCDAO(getAllModifier);
         }
 
         if (chkCloseConnection.isSelected()) {
             importSQLException = "import java.sql.SQLException;";
-            closeConnection = new StringBuilder("    ").append(closeConnectionModifier)
-                    .append("void closeConnection() {\n")
-                    .append("\ttry {\n").toString();
+            closeConnection = generateCloseConnectionJDBCDAO(closeConnectionModifier);
         }
         if (chkConnection.isSelected()) {
-            closeConnection = new StringBuilder(closeConnection)
-                    .append("\t    if (conn != null) {\n")
-                    .append("\t        conn.close();\n")
-                    .append("\t    }\n").toString();
+            closeConnection = generateCloseConnectionConnectionMethodJDBCDAO(closeConnection);
         }
         if (chkPreparedStatement.isSelected()) {
-            closeConnection = new StringBuilder(closeConnection)
-                    .append("\t    if (prStm != null) {\n")
-                    .append("\t        prStm.close();\n")
-                    .append("\t    }\n").toString();
+            closeConnection = generateCloseConnectionPreparedStatementMethodJDBCDAO(closeConnection);
         }
         if (chkResultSet.isSelected()) {
-            closeConnection = new StringBuilder(closeConnection)
-                    .append("\t    if (rs != null) {\n")
-                    .append("\t        rs.close();\n")
-                    .append("\t    }\n").toString();
+            closeConnection = generateCloseConnectionResultSetMethodJDBCDAO(closeConnection);
         }
         if (chkCloseConnection.isSelected()) {
-            closeConnection = new StringBuilder(closeConnection)
-                    .append("\t} catch (SQLException e) {\n")
-                    .append("\t    System.out.println(\"Error at ")
-                    .append(txtClassNameJDBCDAO.getText()).append(": \" + e.getMessage());\n")
-                    .append("        }\n")
-                    .append("    }\n").toString();
+            closeConnection = generateCloseConnectionCatchBlockJDBCDAO(closeConnection);
         }
 
         String packagePathName = "";
-        if (!txtPackageName.getText().trim().isEmpty()) {
-            packagePathName = txtPackageName.getText().trim().replace(".", SYSTEM_SLASH);
+        final String packageName = txtPackageName.getText().trim();
+        if (!packageName.isEmpty()) {
+            packagePathName = packageName.replace(".", SYSTEM_SLASH);
         }
-        File path = new File(new StringBuilder(SAVE_FILE_PATH).append(packagePathName).toString());
+        File path = new File(new StringBuilder(SAVE_FILE_PATH)
+                .append(packagePathName).toString());
         if (!path.isDirectory()) {
             path.mkdirs();
         }
@@ -1951,15 +2026,7 @@ public class MainController extends javax.swing.JFrame {
                             .append(txtClassNameJDBCDAO.getText().trim())
                             .append(".java").toString()));
             bw.newLine();
-            bw.write("/**");
-            bw.newLine();
-            bw.write(" * This class was generated by BangMaple Class Generator");
-            bw.newLine();
-            bw.write(new StringBuilder(" * Date: ")
-                    .append(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-                            .format(new Date())).toString());
-            bw.newLine();
-            bw.write(" */");
+            generateBangMapleIntroductionText(bw);
             if (HAVE_A_PACKAGE_NAME) {
                 bw.newLine();
                 bw.write(new StringBuilder("package ")
@@ -2017,28 +2084,12 @@ public class MainController extends javax.swing.JFrame {
             bw.newLine();
             JOptionPane.showMessageDialog(this, "Successfully generated this java class file.");
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Error while generating class file.",
-                    "Error while generating class", JOptionPane.ERROR_MESSAGE);
+            errorGeneratingClassMessage();
         } finally {
-            try {
-                if (bw != null) {
-                    bw.close();
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Error while generating class file.",
-                        "Error while generating class", JOptionPane.ERROR_MESSAGE);
-            }
+            closeBufferedWriter(bw);
         }
     }
 
-
-    private void btnGenerateJDBCDAOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateJDBCDAOActionPerformed
-        if (!validateJDBCDAOClassName()) {
-            return;
-        }
-        selectProjectPath("jdbcDAO");
-
-    }//GEN-LAST:event_btnGenerateJDBCDAOActionPerformed
 
     private void txtProjectNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProjectNameActionPerformed
         // TODO add your handling code here:
@@ -2064,38 +2115,80 @@ public class MainController extends javax.swing.JFrame {
     private void lblLogoJDBCMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblLogoJDBCMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_lblLogoJDBCMouseClicked
-    private void checkEnableCloseConnection() {
-        if (!chkConnection.isSelected() && !chkPreparedStatement.isSelected() && !chkResultSet.isSelected()) {
-            chkCloseConnection.setSelected(false);
-            chkCloseConnection.setEnabled(false);
-        }
-        if (chkConnection.isSelected() || chkPreparedStatement.isSelected() || chkResultSet.isSelected()) {
-            chkCloseConnection.setSelected(true);
-            chkCloseConnection.setEnabled(true);
-        }
-    }
-    private void chkConnectionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkConnectionItemStateChanged
+
+    private void chkCloseConnectionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkCloseConnectionItemStateChanged
         // TODO add your handling code here:
-        if (chkConnection.isSelected()) {
-            chkSetterConnectionJDBCDAO.setEnabled(true);
-            chkGetterConnectionJDBCDAO.setEnabled(true);
-            chkResultSet.setEnabled(true);
-            chkPreparedStatement.setSelected(true);
-            chkPreparedStatement.setEnabled(true);
-            cbConnectionModifier.setEnabled(true);
+        if (chkCloseConnection.isSelected()) {
+            cbCloseConnectionModifier.setEnabled(true);
         } else {
-            chkSetterConnectionJDBCDAO.setSelected(false);
-            chkGetterConnectionJDBCDAO.setSelected(false);
-            chkSetterConnectionJDBCDAO.setEnabled(false);
-            chkGetterConnectionJDBCDAO.setEnabled(false);
-            chkResultSet.setSelected(false);
-            chkResultSet.setEnabled(false);
-            chkPreparedStatement.setSelected(false);
-            chkPreparedStatement.setEnabled(false);
-            cbConnectionModifier.setEnabled(false);
+            cbCloseConnectionModifier.setEnabled(false);
+        }
+    }//GEN-LAST:event_chkCloseConnectionItemStateChanged
+
+    private void chkgetAllJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkgetAllJDBCDAOItemStateChanged
+        // TODO add your handling code here:
+        if (chkgetAllJDBCDAO.isSelected()) {
+            cbGetAllModifier.setEnabled(true);
+        } else {
+            cbGetAllModifier.setEnabled(false);
+        }
+    }//GEN-LAST:event_chkgetAllJDBCDAOItemStateChanged
+
+    private void chkUpdateJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkUpdateJDBCDAOItemStateChanged
+        // TODO add your handling code here:
+        if (chkUpdateJDBCDAO.isSelected()) {
+            cbUpdateModifier.setEnabled(true);
+        } else {
+            cbUpdateModifier.setEnabled(false);
+        }
+    }//GEN-LAST:event_chkUpdateJDBCDAOItemStateChanged
+
+    private void chkFindJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkFindJDBCDAOItemStateChanged
+        // TODO add your handling code here:
+        if (chkFindJDBCDAO.isSelected()) {
+            cbFindModifier.setEnabled(true);
+        } else {
+            cbFindModifier.setEnabled(false);
+        }
+    }//GEN-LAST:event_chkFindJDBCDAOItemStateChanged
+
+    private void chkRemoveJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkRemoveJDBCDAOItemStateChanged
+        // TODO add your handling code here:
+        if (chkRemoveJDBCDAO.isSelected()) {
+            cbRemoveModifier.setEnabled(true);
+        } else {
+            cbRemoveModifier.setEnabled(false);
+        }
+    }//GEN-LAST:event_chkRemoveJDBCDAOItemStateChanged
+
+    private void chkAddJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkAddJDBCDAOItemStateChanged
+        // TODO add your handling code here:
+        if (chkAddJDBCDAO.isSelected()) {
+            cbAddModifier.setEnabled(true);
+        } else {
+            cbAddModifier.setEnabled(false);
+        }
+    }//GEN-LAST:event_chkAddJDBCDAOItemStateChanged
+
+    private void chkResultSetItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkResultSetItemStateChanged
+        // TODO add your handling code here:
+        if (chkResultSet.isSelected()) {
+            chkSetterResultSetJDBCDAO.setEnabled(true);
+            chkGetterResultSetJDBCDAO.setEnabled(true);
+            chkgetAllJDBCDAO.setEnabled(true);
+            chkFindJDBCDAO.setEnabled(true);
+        } else {
+            chkSetterResultSetJDBCDAO.setSelected(false);
+            chkGetterResultSetJDBCDAO.setSelected(false);
+            chkSetterResultSetJDBCDAO.setEnabled(false);
+            chkGetterResultSetJDBCDAO.setEnabled(false);
+            chkgetAllJDBCDAO.setSelected(false);
+            chkgetAllJDBCDAO.setEnabled(false);
+            chkFindJDBCDAO.setSelected(false);
+            chkFindJDBCDAO.setEnabled(false);
         }
         checkEnableCloseConnection();
-    }//GEN-LAST:event_chkConnectionItemStateChanged
+    }//GEN-LAST:event_chkResultSetItemStateChanged
 
     private void chkPreparedStatementItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkPreparedStatementItemStateChanged
         // TODO add your handling code here:
@@ -2127,79 +2220,86 @@ public class MainController extends javax.swing.JFrame {
         checkEnableCloseConnection();
     }//GEN-LAST:event_chkPreparedStatementItemStateChanged
 
-    private void chkResultSetItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkResultSetItemStateChanged
+    private void chkConnectionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkConnectionItemStateChanged
         // TODO add your handling code here:
-        if (chkResultSet.isSelected()) {
-            chkSetterResultSetJDBCDAO.setEnabled(true);
-            chkGetterResultSetJDBCDAO.setEnabled(true);
-            chkgetAllJDBCDAO.setEnabled(true);
-            chkFindJDBCDAO.setEnabled(true);
+        if (chkConnection.isSelected()) {
+            chkSetterConnectionJDBCDAO.setEnabled(true);
+            chkGetterConnectionJDBCDAO.setEnabled(true);
+            chkResultSet.setEnabled(true);
+            chkPreparedStatement.setSelected(true);
+            chkPreparedStatement.setEnabled(true);
+            cbConnectionModifier.setEnabled(true);
         } else {
-            chkSetterResultSetJDBCDAO.setSelected(false);
-            chkGetterResultSetJDBCDAO.setSelected(false);
-            chkSetterResultSetJDBCDAO.setEnabled(false);
-            chkGetterResultSetJDBCDAO.setEnabled(false);
-            chkgetAllJDBCDAO.setSelected(false);
-            chkgetAllJDBCDAO.setEnabled(false);
-            chkFindJDBCDAO.setSelected(false);
-            chkFindJDBCDAO.setEnabled(false);
+            chkSetterConnectionJDBCDAO.setSelected(false);
+            chkGetterConnectionJDBCDAO.setSelected(false);
+            chkSetterConnectionJDBCDAO.setEnabled(false);
+            chkGetterConnectionJDBCDAO.setEnabled(false);
+            chkResultSet.setSelected(false);
+            chkResultSet.setEnabled(false);
+            chkPreparedStatement.setSelected(false);
+            chkPreparedStatement.setEnabled(false);
+            cbConnectionModifier.setEnabled(false);
         }
         checkEnableCloseConnection();
-    }//GEN-LAST:event_chkResultSetItemStateChanged
+    }//GEN-LAST:event_chkConnectionItemStateChanged
 
-    private void chkCloseConnectionItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkCloseConnectionItemStateChanged
-        // TODO add your handling code here:
-        if (chkCloseConnection.isSelected()) {
-            cbCloseConnectionModifier.setEnabled(true);
-        } else {
-            cbCloseConnectionModifier.setEnabled(false);
+    private void btnGenerateJDBCDAOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateJDBCDAOActionPerformed
+        if (!validateJDBCDAOClassName()) {
+            return;
         }
-    }//GEN-LAST:event_chkCloseConnectionItemStateChanged
+        selectProjectPath("jdbcDAO");
+    }//GEN-LAST:event_btnGenerateJDBCDAOActionPerformed
 
-    private void chkFindJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkFindJDBCDAOItemStateChanged
-        // TODO add your handling code here:
-        if (chkFindJDBCDAO.isSelected()) {
-            cbFindModifier.setEnabled(true);
-        } else {
-            cbFindModifier.setEnabled(false);
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        if (validateConnection()) {
+            if (checkDBConnection()) {
+                txtInfo.setText("(+) Successfully connected to the given database name.");
+            } else {
+                txtInfo.setText("(-) Failed to connect to the given database name.");
+                JOptionPane.showMessageDialog(this, new StringBuilder("Trying to ")
+                        .append("connect to database failed!\n")
+                        .append("Please try to leave the database name blank to ")
+                        .append("use the default database or check again\n")
+                        .append("the IP Address and the port. Even the username ")
+                        .append("and password must be correct.\n")
+                        .append("If this happen again, please check if you already ")
+                        .append("opened the IP forwarding in SQL Server ")
+                        .append("Configuration Wizard.").toString(),
+                        new StringBuilder("Error while connecting ")
+                                .append("to database").toString(), JOptionPane.ERROR_MESSAGE);
+            }
         }
-    }//GEN-LAST:event_chkFindJDBCDAOItemStateChanged
+    }//GEN-LAST:event_btnConnectActionPerformed
 
-    private void chkgetAllJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkgetAllJDBCDAOItemStateChanged
-        // TODO add your handling code here:
-        if (chkgetAllJDBCDAO.isSelected()) {
-            cbGetAllModifier.setEnabled(true);
-        } else {
-            cbGetAllModifier.setEnabled(false);
+    private void btnChooseProjectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseProjectActionPerformed
+        if (!validateConnection()) {
+            return;
         }
-    }//GEN-LAST:event_chkgetAllJDBCDAOItemStateChanged
+        if (!validateJDBCUtilsData()) {
+            return;
+        }
+        selectProjectPath("jdbcUtils");
+    }//GEN-LAST:event_btnChooseProjectActionPerformed
 
-    private void chkAddJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkAddJDBCDAOItemStateChanged
-        // TODO add your handling code here:
-        if (chkAddJDBCDAO.isSelected()) {
-            cbAddModifier.setEnabled(true);
-        } else {
-            cbAddModifier.setEnabled(false);
+    private void btnGenerateEntityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateEntityActionPerformed
+        if (!validateClassNameDTO()) {
+            return;
         }
-    }//GEN-LAST:event_chkAddJDBCDAOItemStateChanged
-
-    private void chkRemoveJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkRemoveJDBCDAOItemStateChanged
-        // TODO add your handling code here:
-        if (chkRemoveJDBCDAO.isSelected()) {
-            cbRemoveModifier.setEnabled(true);
-        } else {
-            cbRemoveModifier.setEnabled(false);
+        if (!validateIfExistExtendingOrImplementing()) {
+            return;
         }
-    }//GEN-LAST:event_chkRemoveJDBCDAOItemStateChanged
-
-    private void chkUpdateJDBCDAOItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkUpdateJDBCDAOItemStateChanged
-        // TODO add your handling code here:
-        if (chkUpdateJDBCDAO.isSelected()) {
-            cbUpdateModifier.setEnabled(true);
-        } else {
-            cbUpdateModifier.setEnabled(false);
+        selectProjectPath("dto");
+    }//GEN-LAST:event_btnGenerateEntityActionPerformed
+    private void checkEnableCloseConnection() {
+        if (!chkConnection.isSelected() && !chkPreparedStatement.isSelected() && !chkResultSet.isSelected()) {
+            chkCloseConnection.setSelected(false);
+            chkCloseConnection.setEnabled(false);
         }
-    }//GEN-LAST:event_chkUpdateJDBCDAOItemStateChanged
+        if (chkConnection.isSelected() || chkPreparedStatement.isSelected() || chkResultSet.isSelected()) {
+            chkCloseConnection.setSelected(true);
+            chkCloseConnection.setEnabled(true);
+        }
+    }
 
     private boolean validateClassNameDTO() {
         String className = txtClassName.getText();
@@ -2226,33 +2326,19 @@ public class MainController extends javax.swing.JFrame {
         return true;
     }
 
-    private boolean validateIfExistExtendingOrImplementing() {
-        if (!txtExtendsDTO.getText().trim().isEmpty()) {
-            if (!String.valueOf(txtExtendsDTO.getText().trim().charAt(0)).matches("^[a-zA-Z]$")) {
+    private boolean validateExtendingDTO() {
+        final String extendsDTOText = txtExtendsDTO.getText().trim();
+        if (!extendsDTOText.isEmpty()) {
+            if (!String.valueOf(extendsDTOText.charAt(0)).matches("^[a-zA-Z]$")) {
                 JOptionPane.showMessageDialog(this,
                         "First letter of class name or package name must be alphabet."
                         + "\nPlease try again.");
                 return false;
             } else {
-                if (!txtExtendsDTO.getText().trim().matches("^[a-zA-Z0-9\\_]{1,256}$")) {
+                if (!extendsDTOText.matches("^[a-zA-Z0-9\\_]{1,256}$")) {
                     JOptionPane.showMessageDialog(this,
-                            "You must follow the class naming format."
-                            + "\nPlease try again later.");
-                    return false;
-                }
-            }
-        }
-        if (!txtImplementsDTO.getText().trim().isEmpty()) {
-            if (!String.valueOf(txtImplementsDTO.getText().trim().charAt(0)).matches("^[a-zA-Z]$")) {
-                JOptionPane.showMessageDialog(this,
-                        "First letter of class name or package name must be alphabet."
-                        + "\nPlease try again.");
-                return false;
-            } else {
-                if (!txtImplementsDTO.getText().trim().matches("^[a-zA-Z0-9\\,\\_\\.\\s]{1,256}$")) {
-                    JOptionPane.showMessageDialog(this,
-                            "You must follow the class naming format."
-                            + "\nPlease try again later.");
+                            new StringBuilder("You must follow the class naming format.")
+                                    .append("\nPlease try again later.").toString());
                     return false;
                 }
             }
@@ -2260,83 +2346,120 @@ public class MainController extends javax.swing.JFrame {
         return true;
     }
 
-    private void btnGenerateEntityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateEntityActionPerformed
-        // TODO add your handling code here:
-        if (!validateClassNameDTO()) {
-            return;
+    private boolean validateImplementingDTO() {
+        final String implementsDTOText = txtImplementsDTO.getText().trim();
+        if (!implementsDTOText.isEmpty()) {
+            if (!String.valueOf(implementsDTOText.charAt(0)).matches("^[a-zA-Z]$")) {
+                JOptionPane.showMessageDialog(this,
+                        new StringBuilder("First letter of class name or package name must be alphabet.")
+                                .append("\nPlease try again.").toString());
+                return false;
+            } else {
+                if (!implementsDTOText.matches("^[a-zA-Z0-9\\,\\_\\.\\s]{1,256}$")) {
+                    JOptionPane.showMessageDialog(this,
+                            new StringBuilder("You must follow the class naming format.")
+                                    .append("\nPlease try again later.").toString());
+                    return false;
+                }
+            }
         }
-        if (!validateIfExistExtendingOrImplementing()) {
-            return;
-        }
-        selectProjectPath("dto");
-    }//GEN-LAST:event_btnGenerateEntityActionPerformed
+        return true;
+    }
 
-    private boolean validateConnection() {
-        if (txtDBName.getText().trim().isEmpty()) {
+    private boolean validateIfExistExtendingOrImplementing() {
+        return (validateExtendingDTO() && validateImplementingDTO());
+    }
+
+    private boolean validateDBNameConnection() {
+        final String dbName = txtDBName.getText().trim();
+        if (dbName.isEmpty()) {
             txtDBName.setText("master");
         }
-        if (!txtDBName.getText().matches("^[a-zA-Z0-9]{1,254}$")) {
+        if (!dbName.matches("^[a-zA-Z0-9]{1,254}$")) {
             JOptionPane.showMessageDialog(this, "Only accept valid character.",
                     "Error while generating class", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        return true;
+    }
 
-        if (txtUsername.getText().trim().isEmpty()) {
+    private boolean validateUsernameConnection() {
+        final String userName = txtUsername.getText().trim();
+        if (userName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please don't leave username blank.",
                     "Error while generating class", JOptionPane.ERROR_MESSAGE);
             return false;
         } else {
-            if (!txtUsername.getText().matches("^[a-zA-Z0-9]{1,254}$")) {
+            if (!userName.matches("^[a-zA-Z0-9]{1,254}$")) {
                 JOptionPane.showMessageDialog(this, "Only accept valid character.",
                         "Error while generating class", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
-        if (txtPassword.getText().trim().isEmpty()) {
+        return true;
+    }
+
+    private boolean validatePasswordConnection() {
+        if (String.valueOf(txtPassword.getPassword()).isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please don't leave password blank.",
                     "Error while generating class", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (txtIP.getText().trim().isEmpty()) {
+        return true;
+    }
+
+    private boolean validateIPConnection() {
+        final String ip = txtIP.getText().trim();
+        if (ip.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please don't leave username blank.",
                     "Error while generating class", JOptionPane.ERROR_MESSAGE);
             return false;
         } else {
-            if (!txtIP.getText().matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")) {
-                if (!txtIP.getText().matches("^[a-zA-Z0-9\\.]{1,254}$")) {
+            if (!ip.matches("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}$")) {
+                if (!ip.matches("^[a-zA-Z0-9\\.]{1,254}$")) {
                     JOptionPane.showMessageDialog(this, "Only accept valid IP Address.",
                             "Error while generating class", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             }
         }
-        if (txtPort.getText().trim().isEmpty()) {
+        return true;
+    }
+
+    private boolean validatePortConnection() {
+        final String port = txtPort.getText().trim();
+        if (port.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please don't leave port blank.",
                     "Error while generating class", JOptionPane.ERROR_MESSAGE);
             return false;
         } else {
-            if (!txtIP.getText().matches("^[0-9]{1,5}$")) {
-                if (!txtIP.getText().matches("^[a-zA-Z0-9\\.]{1,254}$")) {
+            if (!port.matches("^[0-9]{1,5}$")) {
+                if (!port.matches("^[a-zA-Z0-9\\.]{1,254}$")) {
                     JOptionPane.showMessageDialog(this, "Only accept valid IP Address.",
                             "Error while generating class", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             }
             try {
-                Integer.parseInt(txtPort.getText());
+                Integer.parseInt(port);
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Only accept valid port.",
                         "Error while generating class", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
-        if (!txtPackageName.getText().trim().isEmpty()) {
-            if (txtPackageName.getText().trim().charAt(0) == '.') {
+        return true;
+    }
+
+    private boolean validatePackageNameConnection() {
+        final String packageName = txtPackageName.getText().trim();
+        if (!packageName.isEmpty()) {
+            if (packageName.charAt(0) == '.') {
                 JOptionPane.showMessageDialog(this, new StringBuilder("Package name ")
                         .append("musn't be started with a dot. Please try again.").toString());
                 return false;
             } else {
-                if (!txtPackageName.getText().trim().matches("^[a-zA-Z0-9\\.]{1,256}$")) {
+                if (!packageName.matches("^[a-zA-Z0-9\\.]{1,256}$")) {
                     JOptionPane.showMessageDialog(this, new StringBuilder("Package ")
                             .append("name is not correct! Please follow the right format.").toString());
                     return false;
@@ -2346,15 +2469,91 @@ public class MainController extends javax.swing.JFrame {
         return true;
     }
 
-    public static void main(String args[]) {
+    private boolean validateConnection() {
+        return validateDBNameConnection() && validateUsernameConnection()
+                && validatePasswordConnection() && validateIPConnection()
+                && validatePortConnection() && validatePortConnection()
+                && validatePackageNameConnection();
+    }
+
+    private boolean validateClassNameJDBCUtils() {
+        final String className = txtClassNameJDBC.getText().trim();
+        if (className.matches("^[\\_a-zA-Z0-9]{1,255}$")) {
+            if (className.substring(0, 1).matches("^[0-9]$")
+                    || className.substring(0, 1).matches("^[\\.]$")) {
+                JOptionPane.showMessageDialog(this,
+                        new StringBuilder("Can't generate due to class name is not valid!\n")
+                                .append("The first letter must not a number.").toString());
+                return false;
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Can't generate due to class name is not valid!");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateGetConnectionMethodJDBCUtils() {
+        final String getConnection = txtGetConnection.getText().trim();
+        if (getConnection.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "getConnection method name musn't be blank!");
+            return false;
+        } else {
+            if (!getConnection.matches("^[a-zA-Z0-9]{1,}$")
+                    || String.valueOf(getConnection.charAt(0)).matches("^[0-9]$")) {
+                JOptionPane.showMessageDialog(this, "Please follow the correct method name format.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean validateJDBCUtilsData() {
+        return validateClassNameJDBCUtils() && validateGetConnectionMethodJDBCUtils();
+    }
+
+    private boolean validateJDBCDAOClassName() {
+        final String className = txtClassNameJDBCDAO.getText().trim();
+        if (className.matches("^[\\_a-zA-Z0-9]{1,255}$")) {
+            if (className.substring(0, 1).matches("^[0-9]$")
+                    || className.substring(0, 1).matches("^[\\.]$")) {
+                JOptionPane.showMessageDialog(this,
+                        new StringBuilder("Can't generate due to class name is not valid!\n")
+                                .append("The first letter must not a number.").toString());
+                return false;
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Can't generate due to class name is not valid!");
+            return false;
+        }
+        return true;
+    }
+
+    private static void setLookAndFeel() {
         try {
             javax.swing.UIManager.setLookAndFeel(new MaterialLookAndFeel(new JMarsDarkTheme()));
         } catch (UnsupportedLookAndFeelException e) {
             System.exit(0);
         }
+    }
+
+    public static void main(String args[]) {
+        setLookAndFeel();
         java.awt.EventQueue.invokeLater(() -> {
             new MainController().setVisible(true);
         });
+    }
+
+    private class MyFileChooser extends JFileChooser {
+
+        public MyFileChooser(String path) {
+            super(path);
+        }
+
+        @Override
+        public JDialog createDialog(Component parent) throws HeadlessException {
+            return super.createDialog(parent);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2397,6 +2596,8 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkSetterResultSetJDBCDAO;
     private javax.swing.JCheckBox chkUpdateJDBCDAO;
     private javax.swing.JCheckBox chkgetAllJDBCDAO;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2407,13 +2608,14 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
@@ -2422,6 +2624,7 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;

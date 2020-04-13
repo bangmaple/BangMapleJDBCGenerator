@@ -20,39 +20,42 @@ import javax.swing.text.TextAction;
  *
  * @author bangmaple
  */
-public class CutCopyPasteActionSupport {
-  private JMenu jMenu;
-  JPopupMenu popupMenu = new JPopupMenu();
+public final class CutCopyPasteActionSupport {
 
-  public CutCopyPasteActionSupport() {
-      init();
-  }
+    private JMenu jMenu;
+    private JPopupMenu popupMenu;
 
-  private void init() {
-      jMenu = new JMenu("Edit");
-      addAction(new DefaultEditorKit.CutAction(), KeyEvent.VK_X, "Cut" );
-      addAction(new DefaultEditorKit.CopyAction(), KeyEvent.VK_C, "Copy" );
-      addAction(new DefaultEditorKit.PasteAction(), KeyEvent.VK_V, "Paste" );
-  }
+    public CutCopyPasteActionSupport() {
+        popupMenu = new JPopupMenu();
+        init();
+    }
 
-  private void addAction(TextAction action, int key, String text) {
-      action.putValue(AbstractAction.ACCELERATOR_KEY,
-              KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
-      action.putValue(AbstractAction.NAME, text);
-      jMenu.add(new JMenuItem(action));
-      popupMenu.add(new JMenuItem(action));
-  }
+    private void init() {
+        jMenu = new JMenu("Edit");
+        addAction(new DefaultEditorKit.CutAction(), KeyEvent.VK_X, "Cut");
+        addAction(new DefaultEditorKit.CopyAction(), KeyEvent.VK_C, "Copy");
+        addAction(new DefaultEditorKit.PasteAction(), KeyEvent.VK_V, "Paste");
+    }
 
-  public void setPopup(JTextComponent... components){
-      if(components == null){
-          return;
-      }
-      for (JTextComponent tc : components) {
-          tc.setComponentPopupMenu(popupMenu);
-      }
-  }
+    private void addAction(final TextAction action, final int key, final String text) {
+        action.putValue(AbstractAction.ACCELERATOR_KEY,
+                KeyStroke.getKeyStroke(key, InputEvent.CTRL_DOWN_MASK));
+        action.putValue(AbstractAction.NAME, text);
+        jMenu.add(new JMenuItem(action));
+        popupMenu.add(new JMenuItem(action));
+    }
 
-  public JMenu getMenu() {
-      return jMenu;
-  }
+    public final void setPopup(final JTextComponent... components) {
+        if (components == null) {
+            return;
+        }
+
+        for (JTextComponent tc : components) {
+            tc.setComponentPopupMenu(popupMenu);
+        }
+    }
+
+    public JMenu getMenu() {
+        return jMenu;
+    }
 }
