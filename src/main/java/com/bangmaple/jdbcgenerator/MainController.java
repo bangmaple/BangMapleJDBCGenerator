@@ -16,11 +16,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -45,6 +49,7 @@ public class MainController extends javax.swing.JFrame {
     private static String SAVE_FILE_PATH = "";
     private static Boolean HAVE_A_PACKAGE_NAME = Boolean.FALSE;
     private static String SYSTEM_SLASH = "/";
+    private static String PK = "";
 
     public MainController() {
         initFrame();
@@ -60,8 +65,29 @@ public class MainController extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         setTableColumnSize();
+        addGenericActionListener();
+    }
+
+    private void addGenericActionListener() {
         chkPublicAddActionListener();
         chkFinalAddActionListener();
+        cbThemeActionListener();
+    }
+
+    private void cbThemeActionListener() {
+        cbTheme.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                attempt();
+                setLookAndFeel(String.valueOf(cbTheme.getModel().getSelectedItem()));
+                new MainController().setVisible(true);
+            }
+        });
+    }
+
+    private void attempt() {
+        this.setVisible(false);
+        this.dispose();
     }
 
     private void chkPublicAddActionListener() {
@@ -193,6 +219,26 @@ public class MainController extends javax.swing.JFrame {
         jLabel14 = new javax.swing.JLabel();
         txtGetConnection = new javax.swing.JTextField();
         cbGetConnection = new javax.swing.JComboBox<>();
+        jPanel4 = new javax.swing.JPanel();
+        chkCheckDBConnectionEntity = new javax.swing.JCheckBox();
+        jPanel15 = new javax.swing.JPanel();
+        chkToStringEntity = new javax.swing.JCheckBox();
+        chkHashCodeEntity = new javax.swing.JCheckBox();
+        chkEqualsEntity = new javax.swing.JCheckBox();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable3 = new javax.swing.JTable();
+        jPanel16 = new javax.swing.JPanel();
+        txtClassNameEntity = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
+        chkPublicEntity = new javax.swing.JCheckBox();
+        chkFinalEntity = new javax.swing.JCheckBox();
+        btnGenerateEntityDB = new javax.swing.JButton();
+        chkImplSerializableEntity = new javax.swing.JCheckBox();
+        jPanel17 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jPanel14 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
         jPanel6 = new MotionPanel(this);
         jPanel12 = new javax.swing.JPanel();
         txtClassNameJDBCDAO = new javax.swing.JTextField();
@@ -233,8 +279,9 @@ public class MainController extends javax.swing.JFrame {
         jLabel19 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel20 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        cbTheme = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
         lblMaxMin = new javax.swing.JLabel();
         lblMin = new javax.swing.JLabel();
         lblClose = new javax.swing.JLabel();
@@ -413,7 +460,7 @@ public class MainController extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -421,7 +468,7 @@ public class MainController extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Class (DTO)", jPanel1);
+        jTabbedPane1.addTab("Entity (DTO)", jPanel1);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("SQL Connection"));
 
@@ -565,7 +612,7 @@ public class MainController extends javax.swing.JFrame {
                     .addComponent(btnConnect))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnChooseProject)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Connection - Method generation"));
@@ -623,7 +670,7 @@ public class MainController extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -632,6 +679,247 @@ public class MainController extends javax.swing.JFrame {
         );
 
         jTabbedPane1.addTab("JDBC Utils", jPanel2);
+
+        chkCheckDBConnectionEntity.setText("Got connection from \"Check connection\" of JDBC Utils");
+        chkCheckDBConnectionEntity.setEnabled(false);
+        chkCheckDBConnectionEntity.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                chkCheckDBConnectionEntityItemStateChanged(evt);
+            }
+        });
+
+        jPanel15.setBorder(javax.swing.BorderFactory.createTitledBorder("Override method"));
+
+        chkToStringEntity.setText("toString()");
+        chkToStringEntity.setEnabled(false);
+
+        chkHashCodeEntity.setText("hashCode()");
+        chkHashCodeEntity.setEnabled(false);
+
+        chkEqualsEntity.setText("equals()");
+        chkEqualsEntity.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
+        jPanel15.setLayout(jPanel15Layout);
+        jPanel15Layout.setHorizontalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel15Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel15Layout.createSequentialGroup()
+                                .addComponent(chkHashCodeEntity)
+                                .addGap(120, 120, 120))
+                            .addGroup(jPanel15Layout.createSequentialGroup()
+                                .addComponent(chkToStringEntity)
+                                .addContainerGap())))
+                    .addGroup(jPanel15Layout.createSequentialGroup()
+                        .addComponent(chkEqualsEntity)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+        );
+        jPanel15Layout.setVerticalGroup(
+            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel15Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chkToStringEntity)
+                .addGap(18, 18, 18)
+                .addComponent(chkHashCodeEntity)
+                .addGap(18, 18, 18)
+                .addComponent(chkEqualsEntity)
+                .addContainerGap(10, Short.MAX_VALUE))
+        );
+
+        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"private", "String", "id",  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", "String", "name",  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)},
+                {"", null, null,  new Boolean(true),  new Boolean(true),  new Boolean(false)}
+            },
+            new String [] {
+                "Modifier", "Type", "Name", "Getter", "Setter", "Constructor"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jTable3.setEnabled(false);
+        jScrollPane3.setViewportView(jTable3);
+
+        jPanel16.setBorder(javax.swing.BorderFactory.createTitledBorder("Class generation"));
+
+        txtClassNameEntity.setText("GenericDTO");
+        txtClassNameEntity.setEnabled(false);
+
+        jLabel21.setText("Class name:");
+
+        chkPublicEntity.setSelected(true);
+        chkPublicEntity.setText("public");
+        chkPublicEntity.setEnabled(false);
+
+        chkFinalEntity.setText("final");
+        chkFinalEntity.setEnabled(false);
+
+        btnGenerateEntityDB.setText("Select project path and generate...");
+        btnGenerateEntityDB.setEnabled(false);
+        btnGenerateEntityDB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerateEntityDBActionPerformed(evt);
+            }
+        });
+
+        chkImplSerializableEntity.setSelected(true);
+        chkImplSerializableEntity.setText("impl. Serializable");
+        chkImplSerializableEntity.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addComponent(jLabel21)
+                        .addGap(29, 29, 29)
+                        .addComponent(txtClassNameEntity))
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addComponent(chkPublicEntity)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkFinalEntity)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkImplSerializableEntity)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnGenerateEntityDB, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtClassNameEntity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel21))
+                .addGap(21, 21, 21)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chkPublicEntity)
+                    .addComponent(chkFinalEntity)
+                    .addComponent(btnGenerateEntityDB)
+                    .addComponent(chkImplSerializableEntity))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel17.setBorder(javax.swing.BorderFactory.createTitledBorder("User guide"));
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setText("Please execute the \"Check connection\" button from JDBC Utils then the application will automatically translate the Table from SQL Server Database to Entity (DTO) for you.\nYou can edit any properties or class name if you want.\n\nClick the \"Select project path and generate\" to finish.");
+        jScrollPane1.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(chkCheckDBConnectionEntity)
+                    .addComponent(jScrollPane3)
+                    .addComponent(jPanel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(43, 43, 43)
+                        .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(99, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chkCheckDBConnectionEntity)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Entity using DB", jPanel4);
+
+        jLabel8.setText("Coming soon...");
+
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addContainerGap(633, Short.MAX_VALUE))
+        );
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addContainerGap(460, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("DAO using DB", jPanel14);
 
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder("Class generation"));
 
@@ -946,7 +1234,7 @@ public class MainController extends javax.swing.JFrame {
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("JDBC DAO", jPanel6);
@@ -957,9 +1245,11 @@ public class MainController extends javax.swing.JFrame {
 
         jLabel20.setText("Theme:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dark Mode", "White Mode", "Ocean Mode" }));
+        cbTheme.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dark Mode", "White Mode", "Ocean Mode" }));
 
         jLabel17.setText("<html>fb.com/BangMaple<br/>github.com/BangMaple</html>");
+
+        jCheckBox1.setText("Generate configuration file");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -976,8 +1266,10 @@ public class MainController extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboBox2, 0, 125, Short.MAX_VALUE))))
-                .addContainerGap(513, Short.MAX_VALUE))
+                            .addComponent(cbTheme, 0, 125, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 315, Short.MAX_VALUE)
+                        .addComponent(jCheckBox1)))
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -985,14 +1277,15 @@ public class MainController extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel19)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbTheme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(356, Short.MAX_VALUE))
+                .addContainerGap(362, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Preferences", jPanel5);
@@ -1531,6 +1824,10 @@ public class MainController extends javax.swing.JFrame {
                 chooser.setSelectedFile(new File(new StringBuilder(
                         txtClassNameJDBCDAO.getText()).append(".java").toString()));
                 break;
+            case "dbentity":
+                chooser.setSelectedFile(new File(new StringBuilder(
+                        txtClassNameEntity.getText()).append(".java").toString()));
+                break;
             default:
                 chooser.setSelectedFile(new File(new StringBuilder(
                         txtClassName.getText()).append(".java").toString()));
@@ -1620,6 +1917,9 @@ public class MainController extends javax.swing.JFrame {
                     case "dto":
                         generateDTO();
                         break;
+                    case "dbentity":
+                        generateDBEntity();
+                        break;
                     default:
                         break;
                 }
@@ -1639,6 +1939,9 @@ public class MainController extends javax.swing.JFrame {
                     break;
                 case "jdbcDAO":
                     generateJDBCDAO();
+                    break;
+                case "dbentity":
+                    generateDBEntity();
                     break;
                 default:
                     generateDTO();
@@ -2250,10 +2553,21 @@ public class MainController extends javax.swing.JFrame {
         selectProjectPath("jdbcDAO");
     }//GEN-LAST:event_btnGenerateJDBCDAOActionPerformed
 
+    private void enableDBEntityProperties() {
+        chkCheckDBConnectionEntity.setSelected(true);
+    }
+
+    private void enableDBEntityDAOProperties() {
+
+    }
+
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
         if (validateConnection()) {
             if (checkDBConnection()) {
                 txtInfo.setText("(+) Successfully connected to the given database name.");
+                enableDBEntityProperties();
+                getPropertiesFromDBForEntity();
+                enableDBEntityDAOProperties();
             } else {
                 txtInfo.setText("(-) Failed to connect to the given database name.");
                 JOptionPane.showMessageDialog(this, new StringBuilder("Trying to ")
@@ -2290,6 +2604,360 @@ public class MainController extends javax.swing.JFrame {
         }
         selectProjectPath("dto");
     }//GEN-LAST:event_btnGenerateEntityActionPerformed
+
+    private boolean validateEntityDBClassName() {
+        return true;
+    }
+
+    private List<String> getDataFromDBEntityTableToVarList() {
+        final DefaultTableModel tblModel = (DefaultTableModel) jTable3.getModel();
+        int rowCount = tblModel.getRowCount();
+        List<String> varList = new ArrayList<>(3);
+        for (int i = 0; i < rowCount; i++) {
+            if (tblModel.getValueAt(i, 2) == null) {
+                break;
+            }
+            String var = "";
+            if (!String.valueOf(tblModel.getValueAt(i, 0)).trim().isEmpty()) {
+                var = new StringBuilder(var).append(tblModel.getValueAt(i, 0)).append(" ").toString();
+            }
+            var = new StringBuilder(var).append(tblModel.getValueAt(i, 1)).toString();
+            var = new StringBuilder(var).append(" ").append(tblModel.getValueAt(i, 2)).toString();
+            var = new StringBuilder(var).append(" ").append(tblModel.getValueAt(i, 3)).toString();
+            var = new StringBuilder(var).append(" ").append(tblModel.getValueAt(i, 4)).toString();
+            var = new StringBuilder(var).append(" ").append(tblModel.getValueAt(i, 5)).toString();
+            varList.add(var);
+        }
+        return varList;
+    }
+
+    private List<String>[] getDataFromDBEntityTable() {
+        List<String> varList = getDataFromDBEntityTableToVarList();
+        int size = varList.size();
+        List<String> attributeList = new ArrayList<>();
+        List<String> getterList = new ArrayList<>();
+        List<String> setterList = new ArrayList<>();
+        List<String> constructorList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            StringTokenizer stk = new StringTokenizer(varList.get(i), " ");
+            while (stk.hasMoreTokens()) {
+                String getter = null;
+                String setter = null;
+                String var = null;
+                if (stk.countTokens() == 6) {
+                    var = new StringBuilder(stk.nextToken()).append(" ").toString();
+                }
+                String type = stk.nextToken();
+                String name = stk.nextToken();
+                if (var == null) {
+                    var = "";
+                }
+                var = new StringBuilder(var).append(type).append(" ").append(name)
+                        .append(";").toString();
+                if (stk.nextToken().equals("true")) {
+                    getter = generateGetterDataFromDTOTable(type, name);
+                }
+
+                if (stk.nextToken().equals("true")) {
+                    setter = generateSetterDataFromDTOTable(type, name);
+                }
+                attributeList.add(var);
+                getterList.add(getter);
+                setterList.add(setter);
+                if (stk.nextToken().equals("true")) {
+                    constructorList.add(new StringBuilder(type).append(" ").append(name).toString());
+                }
+            }
+        }
+        return new List[]{attributeList, getterList, setterList, constructorList};
+    }
+
+    private String getConstructorDBEntity(final List<String> constructorList) {
+        final String className = txtClassNameEntity.getText().trim();
+        String constructor = new StringBuilder("    public ")
+                .append(className).append("(").toString();
+        int size = constructorList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                String str = constructorList.get(i);
+                if (i != (size - 1)) {
+                    constructor = new StringBuilder(constructor)
+                            .append(str).append(", ").toString();
+                } else {
+                    constructor = new StringBuilder(constructor)
+                            .append(str).toString();
+                }
+            }
+            constructor = new StringBuilder(constructor).append(") {\n").toString();
+            for (int i = 0; i < size; i++) {
+                String str = constructorList.get(i);
+                String testVar = str.substring(str.lastIndexOf(" ") + 1, str.length());
+                constructor = new StringBuilder(constructor).append("\tthis.")
+                        .append(testVar).append(" = ").append(testVar)
+                        .append(";\n").toString();
+            }
+            constructor = new StringBuilder(constructor).append("    }\n\n")
+                    .append("    public ").append(className).append("() {\n")
+                    .append("    }").toString();
+
+        } else {
+            constructor = new StringBuilder(constructor).append(") {\n")
+                    .append("    }").toString();
+        }
+        return constructor;
+    }
+
+    private void generateDBEntity() {
+        List<String>[] list = getDataFromDBEntityTable();
+        List<String> attributeList = list[0];
+        List<String> getterList = list[1];
+        List<String> setterList = list[2];
+        List<String> constructorList = list[3];
+        String var = getAttributesDTO(attributeList);
+        String getter = getGetterDTO(getterList);
+        String setter = getSetterDTO(setterList);
+        String constructor = getConstructorDBEntity(constructorList);
+        String publicModifier = "";
+        String serializable = "";
+        String finalModifier = "";
+        String implementsSerializable = "";
+        String importJavaDate = "";
+        for (int i = 0; i < attributeList.size(); i++) {
+            if (attributeList.get(i).contains("Date")) {
+                importJavaDate = "import java.util.Date;";
+                break;
+            }
+        }
+        if (chkPublicEntity.isSelected()) {
+            publicModifier = "public ";
+        }
+        if (chkFinalEntity.isSelected()) {
+            finalModifier = "final ";
+        }
+        if (chkImplSerializableEntity.isSelected()) {
+            serializable = "import java.io.Serializable;";
+            implementsSerializable = " implements Serializable";
+        }
+
+        BufferedWriter bw = null;
+        String packagePathName = "";
+        final String packageName = txtPackageName.getText().trim();
+        if (!packageName.isEmpty()) {
+            packagePathName = packageName.replace(".", SYSTEM_SLASH);
+        }
+        File path = new File(new StringBuilder(SAVE_FILE_PATH)
+                .append(packagePathName).toString());
+        if (!path.isDirectory()) {
+            path.mkdirs();
+        }
+        final String className = txtClassNameEntity.getText().trim();
+        final String hashCode = new StringBuilder("    @Override\n")
+                .append("    public int hashCode() {\n")
+                .append("\tint hash = 0;\n")
+                .append("\thash += (").append(PK).append(" != null ? ")
+                .append(PK).append(".hashCode() : 0);\n")
+                .append("\treturn hash;\n")
+                .append("    }\n").toString();
+        final String toString = new StringBuilder("    @Override\n")
+                .append("    public String toString() {\n")
+                .append("\treturn \"").append(className)
+                .append("[ ").append(PK).append("=\" ").append("+ ")
+                .append(PK).append(" + \" ]\";\n").append("    }\n").toString();
+        final String equals = new StringBuilder("    @Override\n")
+                .append("    public boolean equals(Object object) {\n")
+                .append("\tif (!(object instanceof ")
+                .append(className).append(")) {\n")
+                .append("\t    return false;\n").append("\t}\n")
+                .append("\t").append(className)
+                .append(" other = (").append(className)
+                .append(") object;\n").append("\tif ((this.")
+                .append(PK).append(" == null && other.")
+                .append(PK).append(" != null) || (this.").append(PK)
+                .append(" != null && !this.").append(PK)
+                .append(".equals(other.").append(PK).append("))) {\n")
+                .append("\t    return false;\n").append("\t}\n")
+                .append("\treturn true;\n").append("    }\n").toString();
+
+        try {
+            final String classGeneratingPath = new StringBuilder(SAVE_FILE_PATH)
+                    .append(packagePathName).append(SYSTEM_SLASH)
+                    .append(className).append(".java").toString();
+            bw = new BufferedWriter(new PrintWriter(classGeneratingPath));
+            bw.newLine();
+            generateBangMapleIntroductionText(bw);
+            if (HAVE_A_PACKAGE_NAME) {
+                bw.newLine();
+                bw.write(new StringBuilder("package ")
+                        .append(txtPackageName.getText().trim()).append(";").toString());
+                bw.newLine();
+            }
+            if (!implementsSerializable.isEmpty()) {
+                bw.newLine();
+                bw.write(serializable);
+            }
+            if (!importJavaDate.isEmpty()) {
+                bw.newLine();
+                bw.write(importJavaDate);
+            }
+            if (!implementsSerializable.isEmpty() || !importJavaDate.isEmpty()) {
+                bw.newLine();
+            }
+            bw.newLine();
+            bw.write(new StringBuilder(publicModifier).append(finalModifier)
+                    .append("class ").append(className)
+                    .append(implementsSerializable).append(" {").toString());
+            bw.newLine();
+            bw.write(new StringBuilder("\n").append(var).toString());
+            bw.newLine();
+            bw.write(constructor);
+            bw.newLine();
+            bw.write(getter);
+            bw.write(setter);
+            bw.newLine();
+
+            if (!hashCode.isEmpty() && chkHashCodeEntity.isSelected()) {
+                bw.write(hashCode);
+                bw.newLine();
+            }
+            if (!equals.isEmpty() && chkEqualsEntity.isSelected()) {
+                bw.write(equals);
+                bw.newLine();
+            }
+            if (!toString.isEmpty() && chkToStringEntity.isSelected()) {
+                bw.write(toString);
+                bw.newLine();
+            }
+            bw.write("}");
+            bw.newLine();
+            JOptionPane.showMessageDialog(this, "Successfully generated this java class file.");
+        } catch (IOException ex) {
+            errorGeneratingClassMessage();
+        } finally {
+            closeBufferedWriter(bw);
+        }
+    }
+
+    private boolean validateClassNameDBEntity() {
+        String className = txtClassNameEntity.getText();
+        if (!className.trim().isEmpty()) {
+            String tmpStr = String.valueOf(className.charAt(0));
+            if (!tmpStr.matches("^[a-zA-Z]$")) {
+                JOptionPane.showMessageDialog(this,
+                        "First letter of class name must be alphabet."
+                        + "\nPlease try again.");
+                return false;
+            } else {
+                if (!className.matches("^[a-zA-Z0-9\\_]{1,256}$")) {
+                    JOptionPane.showMessageDialog(this,
+                            "You must follow the class naming format."
+                            + "\nPlease try again later.");
+                    return false;
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Please don't leave class name blank.");
+            return false;
+        }
+        return true;
+    }
+
+    private void btnGenerateEntityDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateEntityDBActionPerformed
+        if (!validateClassNameDBEntity()) {
+            return;
+        }
+        selectProjectPath("dbentity");
+    }//GEN-LAST:event_btnGenerateEntityDBActionPerformed
+
+    private void getPropertiesFromDBForEntity() {
+        Connection conn = null;
+        PreparedStatement prStm = null;
+        ResultSet rs = null;
+        try {
+            conn = DriverManager.getConnection(new StringBuilder("jdbc:sqlserver://")
+                    .append(txtIP.getText()).append(":").append(txtPort.getText())
+                    .append(";databaseName=").append(txtDBName.getText())
+                    .append(";username=").append(txtUsername.getText())
+                    .append(";password=")
+                    .append(String.valueOf(txtPassword.getPassword())).toString());
+            rs = conn.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+            List<String> tblList = new ArrayList<>();
+            while (rs.next()) {
+                final String className = rs.getString("TABLE_NAME");
+                tblList.add(className);
+            }
+            rs.close();
+            txtClassNameEntity.setText(tblList.get(0));
+            tblList.remove("sysdiagrams");
+            tblList.remove("trace_xe_action_map");
+            tblList.remove("trace_xe_event_map");
+
+            List<String> varList = new ArrayList<>();
+            List<String> dataTypeList = new ArrayList<>();
+            Map<String, String> dataTypeMap = new LinkedHashMap<>();
+            dataTypeMap.put("int", "Integer");
+            dataTypeMap.put("date", "Date");
+            dataTypeMap.put("nvarchar", "String");
+            dataTypeMap.put("varchar", "String");
+            dataTypeMap.put("char", "Character");
+            dataTypeMap.put("bit", "Boolean");
+            dataTypeMap.put("datetime", "Date");
+            dataTypeMap.put("float", "Float");
+
+            for (int j = 0; j < tblList.size(); j++) {
+                prStm = conn.prepareStatement("SELECT * FROM " + tblList.get(j));
+                rs = prStm.executeQuery();
+                int k = 0;
+                for (int l = 0; l < rs.getMetaData().getColumnCount(); l++) {
+                    varList.add(rs.getMetaData().getColumnName(++k).substring(0, 1).toLowerCase() + rs.getMetaData().getColumnName(k).substring(1));
+                    dataTypeList.add(rs.getMetaData().getColumnTypeName(k));
+                }
+                rs.close();
+                rs = conn.getMetaData().getPrimaryKeys(null, null, tblList.get(j));
+                rs.next();
+                String pk = rs.getString("COLUMN_NAME");
+                pk = pk.substring(0, 1).toLowerCase() + pk.substring(1);
+                if (pk != null) {
+                    chkToStringEntity.setEnabled(true);
+                    chkHashCodeEntity.setEnabled(true);
+                    chkEqualsEntity.setEnabled(true);
+                }
+                PK = pk;
+                rs.close();
+            }
+            DefaultTableModel entityTBLModel = (DefaultTableModel) jTable3.getModel();
+            entityTBLModel.setRowCount(0);
+            for (int i = 0; i < varList.size(); i++) {
+                entityTBLModel.addRow(new Object[]{"private", dataTypeMap.get(dataTypeList.get(i)), varList.get(i), true, true, true});
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error while generating Entity class from Database.");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (prStm != null) {
+                    prStm.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error while generating Entity class from Database.");
+            }
+        }
+    }
+
+    private void chkCheckDBConnectionEntityItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkCheckDBConnectionEntityItemStateChanged
+        chkPublicEntity.setEnabled(true);
+        chkFinalEntity.setEnabled(true);
+        chkImplSerializableEntity.setEnabled(true);
+        txtClassNameEntity.setEnabled(true);
+        btnGenerateEntityDB.setEnabled(true);
+        jTable3.setEnabled(true);
+    }//GEN-LAST:event_chkCheckDBConnectionEntityItemStateChanged
+
     private void checkEnableCloseConnection() {
         if (!chkConnection.isSelected() && !chkPreparedStatement.isSelected() && !chkResultSet.isSelected()) {
             chkCloseConnection.setSelected(false);
@@ -2375,7 +3043,7 @@ public class MainController extends javax.swing.JFrame {
         if (dbName.isEmpty()) {
             txtDBName.setText("master");
         }
-        if (!dbName.matches("^[a-zA-Z0-9]{1,254}$")) {
+        if (!dbName.matches("^[a-zA-Z0-9\\.\\_-]{1,254}$")) {
             JOptionPane.showMessageDialog(this, "Only accept valid character.",
                     "Error while generating class", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -2529,16 +3197,20 @@ public class MainController extends javax.swing.JFrame {
         return true;
     }
 
-    private static void setLookAndFeel() {
+    private static void setLookAndFeel(final String mode) {
         try {
-            javax.swing.UIManager.setLookAndFeel(new MaterialLookAndFeel(new JMarsDarkTheme()));
+            if (mode.equals("Dark mode")) {
+                javax.swing.UIManager.setLookAndFeel(new MaterialLookAndFeel(new JMarsDarkTheme()));
+            } else {
+                javax.swing.UIManager.setLookAndFeel(new MaterialLookAndFeel());
+            }
         } catch (UnsupportedLookAndFeelException e) {
             System.exit(0);
         }
     }
 
     public static void main(String args[]) {
-        setLookAndFeel();
+        setLookAndFeel("Dark mode");
         java.awt.EventQueue.invokeLater(() -> {
             new MainController().setVisible(true);
         });
@@ -2560,6 +3232,7 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JButton btnChooseProject;
     private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnGenerateEntity;
+    private javax.swing.JButton btnGenerateEntityDB;
     private javax.swing.JButton btnGenerateJDBCDAO;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cbAddModifier;
@@ -2571,21 +3244,28 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbPreparedStatementModifier;
     private javax.swing.JComboBox<String> cbRemoveModifier;
     private javax.swing.JComboBox<String> cbResultSetModifier;
+    private javax.swing.JComboBox<String> cbTheme;
     private javax.swing.JComboBox<String> cbUpdateModifier;
     private javax.swing.JCheckBox chkAddJDBCDAO;
+    private javax.swing.JCheckBox chkCheckDBConnectionEntity;
     private javax.swing.JCheckBox chkCloseConnection;
     private javax.swing.JCheckBox chkConnection;
+    private javax.swing.JCheckBox chkEqualsEntity;
     private javax.swing.JCheckBox chkFinal;
     private javax.swing.JCheckBox chkFinalDTO;
+    private javax.swing.JCheckBox chkFinalEntity;
     private javax.swing.JCheckBox chkFinalJDBCDAO;
     private javax.swing.JCheckBox chkFindJDBCDAO;
     private javax.swing.JCheckBox chkGetterConnectionJDBCDAO;
     private javax.swing.JCheckBox chkGetterPreparedStatementJDBCDAO;
     private javax.swing.JCheckBox chkGetterResultSetJDBCDAO;
+    private javax.swing.JCheckBox chkHashCodeEntity;
     private javax.swing.JCheckBox chkImplSerializable;
+    private javax.swing.JCheckBox chkImplSerializableEntity;
     private javax.swing.JCheckBox chkPreparedStatement;
     private javax.swing.JCheckBox chkPublic;
     private javax.swing.JCheckBox chkPublicDTO;
+    private javax.swing.JCheckBox chkPublicEntity;
     private javax.swing.JCheckBox chkPublicJDBCDAO;
     private javax.swing.JCheckBox chkRemoveJDBCDAO;
     private javax.swing.JCheckBox chkResultSet;
@@ -2594,10 +3274,11 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkSetterConnectionJDBCDAO;
     private javax.swing.JCheckBox chkSetterPreparedStatementJDBCDAO;
     private javax.swing.JCheckBox chkSetterResultSetJDBCDAO;
+    private javax.swing.JCheckBox chkToStringEntity;
     private javax.swing.JCheckBox chkUpdateJDBCDAO;
     private javax.swing.JCheckBox chkgetAllJDBCDAO;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2611,37 +3292,49 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable3;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel lblClose;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblLogoJDBC;
     private javax.swing.JLabel lblMaxMin;
     private javax.swing.JLabel lblMin;
     private javax.swing.JTextField txtClassName;
+    private javax.swing.JTextField txtClassNameEntity;
     private javax.swing.JTextField txtClassNameJDBC;
     private javax.swing.JTextField txtClassNameJDBCDAO;
     private javax.swing.JTextField txtDBName;
