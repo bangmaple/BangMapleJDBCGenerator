@@ -12,7 +12,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,10 +27,13 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -36,9 +44,17 @@ import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.JMarsDarkTheme;
 import javax.swing.JFileChooser;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -50,12 +66,71 @@ public class MainController extends javax.swing.JFrame {
     private static Boolean HAVE_A_PACKAGE_NAME = Boolean.FALSE;
     private static String SYSTEM_SLASH = "/";
     private static String PK = "";
+    private static Vector<String> model = new Vector<>();
+    private static List<String> pPATH = new ArrayList<>();
+    private static Map<String, String> m = new HashMap<>();
 
     public MainController() {
         initFrame();
         popupMenu();
         loadLogo();
         changeSlash();
+        loadConfiguration();
+        load();
+        loadDefaultNBPCB();
+        loadListeners();
+    }
+
+    private void loadListeners() {
+        txtDefaultNBPP.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent de) {
+                updateProjectNameCB();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent de) {
+                updateProjectNameCB();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent de) {
+                updateProjectNameCB();
+            }
+        });
+    }
+
+    private void updateProjectNameCB() {
+        load();
+    }
+
+    private void initConfiguration(Properties p) {
+
+        txtDefaultNBPP.setText(p.getProperty("defaultNBPP"));
+        cbTheme.getModel().setSelectedItem(p.getProperty("theme", "Dark Mode"));
+        cbLang.getModel().setSelectedItem(p.getProperty("lang", "en-US"));
+
+        txtIP.setText(p.getProperty("sqlIP", "127.0.0.1"));
+        txtPort.setText(p.getProperty("sqlPort", "1433"));
+        txtUsername.setText(p.getProperty("sqlUsername", "sa"));
+        txtDBName.setText(p.getProperty("sqlDB", "master"));
+        txtPassword.setText(p.getProperty("sqlPassword", ""));
+    }
+
+    private void loadConfiguration() {
+        File f = new File("conf.properties");
+        if (f.exists()) {
+            if (f.canRead() && f.canWrite()) {
+                try {
+                    InputStream is = new FileInputStream("conf.properties");
+                    Properties p = new Properties();
+                    p.load(is);
+                    initConfiguration(p);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void initFrame() {
@@ -162,6 +237,79 @@ public class MainController extends javax.swing.JFrame {
                 txtClassNameJDBCDAO, txtDBName, txtClassName,
                 txtClassNameJDBCDAO, txtPassword, txtUsername, txtPackageName,
                 txtExtendsDTO, txtImplementsDTO, txtGetConnection);
+    }
+
+    private void loadDefaultNBPCB() {
+
+    }
+
+    private void load() {
+        File f;
+        model.clear();
+        m.clear();
+        pPATH.clear();
+        cbProjects.removeAllItems();
+        if (txtDefaultNBPP.getText().trim().isEmpty()) {
+            String user = System.getProperty("user.name");
+            if (SYSTEM_SLASH.equals("\\")) {
+                f = new File("C:\\Users\\" + user + "\\Documents\\NetBeansProjects\\");
+            } else {
+                f = new File("/Users/" + user + "/NetBeansProjects/");
+            }
+        } else {
+            f = new File(txtDefaultNBPP.getText() + SYSTEM_SLASH);
+        }
+        File[] c = f.listFiles(new FileFilter() {
+            private boolean parse(File f) {
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder;
+                try {
+                    builder = factory.newDocumentBuilder();
+                    Document document = builder.parse(f);
+                    document.getDocumentElement().normalize();
+                    Element root = document.getDocumentElement();
+                    if (f.getName().equals("build.xml")) {
+                        m.put(f.getParent(), root.getAttribute("name"));
+                        return true;
+                    } else {
+                        m.put(f.getParent(), root.getElementsByTagName("artifactId")
+                                .item(0).getTextContent());
+                        return true;
+                    }
+                } catch (IOException | ParserConfigurationException | SAXException ex) {
+                    ex.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean accept(File file) {
+                if (file.canRead() && file.canWrite()) {
+                    File ff = new File(file.getAbsolutePath());
+                    File[] f = ff.listFiles((File file1, String string) -> {
+                        return string.equals("build.xml") || string.equals("pom.xml");
+                    });
+                    if (f != null && f.length > 0) {
+                        if (f[0].getName().equals("build.xml")) {
+                            return parse(f[0]);
+                        } else if (f[0].getName().equals("pom.xml")) {
+                            return parse(f[0]);
+                        }
+                    }
+                }
+                return false;
+            }
+        });
+
+        model.addElement("-- Select a NetBeans (Ant/Maven) project --");
+        pPATH.add("");
+        m.entrySet().forEach((entry) -> {
+            String key = entry.getKey();
+            String val = entry.getValue();
+            pPATH.add(key);
+            model.addElement(val);
+        });
+        cbProjects.setSelectedIndex(0);
     }
 
     /**
@@ -277,11 +425,24 @@ public class MainController extends javax.swing.JFrame {
         cbCloseConnectionModifier = new javax.swing.JComboBox<>();
         jPanel5 = new javax.swing.JPanel();
         jLabel19 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cbLang = new javax.swing.JComboBox<>();
         jLabel20 = new javax.swing.JLabel();
         cbTheme = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jButton1 = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        txtDefaultNBPP = new javax.swing.JTextField();
+        chkSaveSQLConnection = new javax.swing.JCheckBox();
+        jButton3 = new javax.swing.JButton();
+        chkSavePassword = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jCheckBox5 = new javax.swing.JCheckBox();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
         lblMaxMin = new javax.swing.JLabel();
         lblMin = new javax.swing.JLabel();
         lblClose = new javax.swing.JLabel();
@@ -292,6 +453,8 @@ public class MainController extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtInfo = new javax.swing.JLabel();
+        cbProjects = new javax.swing.JComboBox<>(model);
+        jLabel22 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -460,7 +623,7 @@ public class MainController extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(jLabel18)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -612,7 +775,7 @@ public class MainController extends javax.swing.JFrame {
                     .addComponent(btnConnect))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnChooseProject)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Connection - Method generation"));
@@ -670,7 +833,7 @@ public class MainController extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -709,12 +872,9 @@ public class MainController extends javax.swing.JFrame {
                     .addGroup(jPanel15Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel15Layout.createSequentialGroup()
-                                .addComponent(chkHashCodeEntity)
-                                .addGap(120, 120, 120))
-                            .addGroup(jPanel15Layout.createSequentialGroup()
-                                .addComponent(chkToStringEntity)
-                                .addContainerGap())))
+                            .addComponent(chkHashCodeEntity)
+                            .addComponent(chkToStringEntity))
+                        .addGap(120, 120, 120))
                     .addGroup(jPanel15Layout.createSequentialGroup()
                         .addComponent(chkEqualsEntity)
                         .addGap(0, 0, Short.MAX_VALUE))))
@@ -728,7 +888,7 @@ public class MainController extends javax.swing.JFrame {
                 .addComponent(chkHashCodeEntity)
                 .addGap(18, 18, 18)
                 .addComponent(chkEqualsEntity)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
@@ -847,7 +1007,7 @@ public class MainController extends javax.swing.JFrame {
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
-        jTextArea1.setText("Please execute the \"Check connection\" button from JDBC Utils then the application will automatically translate the Table from SQL Server Database to Entity (DTO) for you.\nYou can edit any properties or class name if you want.\n\nClick the \"Select project path and generate\" to finish.");
+        jTextArea1.setText("Please execute the \"Check connection\" button from JDBC Utils then the application will automatically translate the Table from SQL Server Database to Entity (DTO) for you.\nYou can edit any property or class name if you want.\n\nClick the \"Select project path and generate\" to finish.");
         jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
@@ -916,7 +1076,7 @@ public class MainController extends javax.swing.JFrame {
             .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addContainerGap(460, Short.MAX_VALUE))
+                .addContainerGap(466, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("DAO using DB", jPanel14);
@@ -1234,14 +1394,14 @@ public class MainController extends javax.swing.JFrame {
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("JDBC DAO", jPanel6);
 
         jLabel19.setText("Language:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "en-US", "vi-VN" }));
+        cbLang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "en-US", "vi-VN" }));
 
         jLabel20.setText("Theme:");
 
@@ -1249,161 +1409,253 @@ public class MainController extends javax.swing.JFrame {
 
         jLabel17.setText("<html>fb.com/BangMaple<br/>github.com/BangMaple</html>");
 
-        jCheckBox1.setText("Generate configuration file");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel19)
-                            .addComponent(jLabel20))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cbTheme, 0, 125, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 315, Short.MAX_VALUE)
-                        .addComponent(jCheckBox1)))
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel19)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbTheme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(362, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab("Preferences", jPanel5);
-
-        lblMaxMin.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblMaxMinMouseClicked(evt);
-            }
-        });
-
-        lblMin.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblMinMouseClicked(evt);
-            }
-        });
-
-        lblClose.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblCloseMouseClicked(evt);
-            }
-        });
-
-        lblLogo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblLogoMouseClicked(evt);
-            }
-        });
-
-        lblLogoJDBC.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblLogoJDBCMouseClicked(evt);
-            }
-        });
-
-        txtProjectName.setEditable(false);
-        txtProjectName.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setText("Choose...");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtProjectNameActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Package name:");
+        jLabel23.setText("NetBeansProjects path:");
 
-        jLabel13.setText("Project path:");
+        txtDefaultNBPP.setEditable(false);
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblLogoJDBC, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(lblMaxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtInfo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel9Layout.createSequentialGroup()
-                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel13)
-                                    .addComponent(jLabel2))
+        chkSaveSQLConnection.setText("Save SQL Connection string for the next time");
+
+        jButton3.setText("Save this configuration");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        chkSavePassword.setText("Also save SQL Connection password (not recommended)");
+
+        jCheckBox3.setText("Save JDBC Utils configuration");
+
+        jCheckBox4.setText("Save JDBC DAO configuration");
+
+        jCheckBox5.setText("Save Entity (DTO) configuration");
+
+        jLabel24.setText("If the path is blank, the tool will choose the default NetBeansProjects path:");
+
+        jLabel25.setText(" - for Windows: C:\\Users\\"+System.getProperty("user.name")+"\\Documents\\NetBeansProjects\\");
+
+            jLabel26.setText(" - for macOS: /Users/"+System.getProperty("user.name")+"/NetBeansProjects/");
+
+            jLabel27.setText("Please click the button \"Choose\" if you want to change the path for the Project name combo box.");
+
+            jLabel28.setText("You will lose the current configuration if you don't attempt to save this.");
+
+            javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+            jPanel5.setLayout(jPanel5Layout);
+            jPanel5Layout.setHorizontalGroup(
+                jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel5Layout.createSequentialGroup()
+                            .addComponent(jLabel19)
+                            .addGap(18, 18, 18)
+                            .addComponent(cbLang, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(24, 24, 24)
+                            .addComponent(jLabel20)
+                            .addGap(18, 18, 18)
+                            .addComponent(cbTheme, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(chkSaveSQLConnection)
+                        .addComponent(chkSavePassword)
+                        .addComponent(jCheckBox3)
+                        .addComponent(jCheckBox4)
+                        .addComponent(jCheckBox5)
+                        .addComponent(jLabel24)
+                        .addComponent(jLabel25)
+                        .addComponent(jLabel26)
+                        .addComponent(jLabel27)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton3))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel23)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtDefaultNBPP, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtPackageName, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
-                                    .addComponent(txtProjectName))))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(0, 0, 0)
-                .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 737, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblMaxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jButton1)))
+                        .addComponent(jLabel28))
+                    .addContainerGap(106, Short.MAX_VALUE))
+            );
+            jPanel5Layout.setVerticalGroup(
+                jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jLabel24)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel25)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel26)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel27)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel23)
+                        .addComponent(txtDefaultNBPP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1))
+                    .addGap(18, 18, 18)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel19)
+                        .addComponent(cbLang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbTheme, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel20))
+                    .addGap(18, 18, 18)
+                    .addComponent(chkSaveSQLConnection)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(chkSavePassword)
+                    .addGap(18, 18, 18)
+                    .addComponent(jCheckBox3)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jCheckBox4)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jCheckBox5)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                    .addComponent(jLabel28)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton3))
+                    .addContainerGap())
+            );
+
+            jTabbedPane1.addTab("Configuration", jPanel5);
+
+            lblMaxMin.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    lblMaxMinMouseClicked(evt);
+                }
+            });
+
+            lblMin.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    lblMinMouseClicked(evt);
+                }
+            });
+
+            lblClose.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    lblCloseMouseClicked(evt);
+                }
+            });
+
+            lblLogo.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    lblLogoMouseClicked(evt);
+                }
+            });
+
+            lblLogoJDBC.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    lblLogoJDBCMouseClicked(evt);
+                }
+            });
+
+            txtProjectName.setEditable(false);
+            txtProjectName.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    txtProjectNameActionPerformed(evt);
+                }
+            });
+
+            jLabel2.setText("Package name:");
+
+            jLabel13.setText("Project path:");
+
+            cbProjects.addItemListener(new java.awt.event.ItemListener() {
+                public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                    cbProjectsItemStateChanged(evt);
+                }
+            });
+
+            jLabel22.setText("Project name:");
+
+            javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+            jPanel9.setLayout(jPanel9Layout);
+            jPanel9Layout.setHorizontalGroup(
+                jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel9Layout.createSequentialGroup()
                             .addContainerGap()
-                            .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
-                        .addComponent(lblLogoJDBC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addComponent(jTabbedPane1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtPackageName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtProjectName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9))
-        );
+                            .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(lblLogoJDBC, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(0, 0, 0)
+                            .addComponent(lblMaxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel9Layout.createSequentialGroup()
+                            .addGap(63, 63, 63)
+                            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel9Layout.createSequentialGroup()
+                                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel22)
+                                        .addComponent(jLabel13))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(txtPackageName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                                        .addComponent(txtProjectName)
+                                        .addComponent(cbProjects, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(txtInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 581, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 0, 0)
+                    .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel9Layout.createSequentialGroup()
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 737, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE))
+            );
+            jPanel9Layout.setVerticalGroup(
+                jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel9Layout.createSequentialGroup()
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblMaxMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel9Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE))
+                            .addComponent(lblLogoJDBC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblMin, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTabbedPane1)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cbProjects, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel22))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel13)
+                        .addComponent(txtProjectName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(txtPackageName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(txtInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(10, 10, 10))
+            );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
+            pack();
+        }// </editor-fold>//GEN-END:initComponents
 
     private boolean closeDBConnection(Connection conn) {
         if (conn != null) {
@@ -1819,22 +2071,33 @@ public class MainController extends javax.swing.JFrame {
             case "jdbcUtils":
                 chooser.setSelectedFile(new File(new StringBuilder(
                         txtClassNameJDBC.getText()).append(".java").toString()));
+                chooser.setFileFilter(new FileNameExtensionFilter("Only accept NetBeans project folder!",
+                        "java"));
                 break;
             case "jdbcDAO":
                 chooser.setSelectedFile(new File(new StringBuilder(
                         txtClassNameJDBCDAO.getText()).append(".java").toString()));
+                chooser.setFileFilter(new FileNameExtensionFilter("Only accept NetBeans project folder!",
+                        "java"));
                 break;
             case "dbentity":
                 chooser.setSelectedFile(new File(new StringBuilder(
                         txtClassNameEntity.getText()).append(".java").toString()));
+                chooser.setFileFilter(new FileNameExtensionFilter("Only accept NetBeans project folder!",
+                        "java"));
+                break;
+            case "projectPath":
+                chooser.setSelectedFile(new File("Do not change this"));
+                chooser.setFileFilter(new FileNameExtensionFilter("Only accept folder containing NetBeans projects!",
+                        "java"));
                 break;
             default:
                 chooser.setSelectedFile(new File(new StringBuilder(
                         txtClassName.getText()).append(".java").toString()));
+                chooser.setFileFilter(new FileNameExtensionFilter("Only accept NetBeans project folder!",
+                        "java"));
                 break;
         }
-        chooser.setFileFilter(new FileNameExtensionFilter("Only accept NetBeans project folder!",
-                "java"));
 
     }
 
@@ -1855,7 +2118,35 @@ public class MainController extends javax.swing.JFrame {
                             filename.lastIndexOf(SYSTEM_SLASH)))
                             .append(SYSTEM_SLASH).toString();
                     txtProjectName.setText(projectPath);
+                    dialog.setVisible(false);
+                } else if (JFileChooser.CANCEL_SELECTION.equals(evt.getActionCommand())) {
+                    dialog.setVisible(false);
+                }
+            }
+        });
+    }
 
+    private void saveNBPojectsDialogActionListener(MyFileChooser chooser, JDialog dialog) {
+        chooser.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                JFileChooser chooser = (JFileChooser) evt.getSource();
+                if (JFileChooser.APPROVE_SELECTION.equals(evt.getActionCommand())) {
+                    File f = chooser.getSelectedFile().getParentFile();
+
+                  //  if (SYSTEM_SLASH.equals("\\")) {
+              //          f = f.getParentFile();
+               //     }
+
+                    String projectPath = "";
+                    if (f.isDirectory()) {
+                        projectPath = f.getAbsolutePath();
+                        JOptionPane.showMessageDialog(null, "Successfully chose the default NetBeansProjects path!");
+                    } else {
+
+                        JOptionPane.showMessageDialog(null, "This is not a directory. Please try again.");
+                    }
+                    txtDefaultNBPP.setText(projectPath);
                     dialog.setVisible(false);
                 } else if (JFileChooser.CANCEL_SELECTION.equals(evt.getActionCommand())) {
                     dialog.setVisible(false);
@@ -1877,76 +2168,77 @@ public class MainController extends javax.swing.JFrame {
         MyFileChooser chooser = new MyFileChooser(".");
         chooseSaveDialogStrategy(chooser, type);
         final JDialog dialog = chooser.createDialog(null);
-        addSaveDialogActionListener(chooser, dialog);
+        if (type.equals("projectPath")) {
+            saveNBPojectsDialogActionListener(chooser, dialog);
+        } else {
+            addSaveDialogActionListener(chooser, dialog);
+        }
         addDialogWindowListener(dialog);
         dialog.setVisible(true);
+    }
+
+    private void setNetBeansProjectType(final String type) {
+        switch (type) {
+            case "jdbcUtils":
+                generateJDBCUtils();
+                break;
+            case "jdbcDAO":
+                generateJDBCDAO();
+                break;
+            case "dbentity":
+                generateDBEntity();
+                break;
+            default:
+                generateDTO();
+                break;
+        }
+    }
+
+    private void checkProjectPathBeforeUse(final String type) {
+        String projectPath;
+        try {
+            projectPath = new StringBuilder(SAVE_FILE_PATH
+                    .substring(0, SAVE_FILE_PATH.lastIndexOf(SYSTEM_SLASH)))
+                    .append(SYSTEM_SLASH).toString();
+        } catch (StringIndexOutOfBoundsException e) {
+            return;
+        }
+        File f1 = new File(new StringBuilder(projectPath).append("build.xml")
+                .toString());
+        File f2 = new File(new StringBuilder(projectPath).append("pom.xml")
+                .toString());
+        if (f1.isFile() || f2.isFile()) {
+            String tmp = SAVE_FILE_PATH;
+            if (f2.isFile()) {
+                SAVE_FILE_PATH = new StringBuilder(SAVE_FILE_PATH)
+                        .append("src").append(SYSTEM_SLASH).append("main")
+                        .append(SYSTEM_SLASH).append("java")
+                        .append(SYSTEM_SLASH).toString();
+            } else {
+                SAVE_FILE_PATH = new StringBuilder(SAVE_FILE_PATH)
+                        .append("src").append(SYSTEM_SLASH).toString();
+            }
+            setNetBeansProjectType(type);
+            SAVE_FILE_PATH = tmp;
+        } else {
+            txtProjectName.setText("");
+            JOptionPane.showMessageDialog(this,
+                    new StringBuilder("Only accept NetBeansProjects's project folder.")
+                            .append("\nJava with Ant or Maven is acceptable!").toString());
+        }
     }
 
     private void setSaveFilePath(boolean check, String type) {
         if (!check) {
             initSaveDialog(type);
-            String projectPath;
-            try {
-                projectPath = new StringBuilder(SAVE_FILE_PATH
-                        .substring(0, SAVE_FILE_PATH.lastIndexOf(SYSTEM_SLASH)))
-                        .append(SYSTEM_SLASH).toString();
-            } catch (StringIndexOutOfBoundsException e) {
-                return;
-            }
-            File f1 = new File(new StringBuilder(projectPath).append("build.xml")
-                    .toString());
-            File f2 = new File(new StringBuilder(projectPath).append("pom.xml")
-                    .toString());
-            if (f1.isFile() || f2.isFile()) {
-                if (f2.isFile()) {
-                    SAVE_FILE_PATH = new StringBuilder(SAVE_FILE_PATH)
-                            .append("src").append(SYSTEM_SLASH).append("main")
-                            .append(SYSTEM_SLASH).append("java")
-                            .append(SYSTEM_SLASH).toString();
-                } else {
-                    SAVE_FILE_PATH = new StringBuilder(SAVE_FILE_PATH)
-                            .append("src").append(SYSTEM_SLASH).toString();
-                }
-                switch (type) {
-                    case "jdbcUtils":
-                        generateJDBCUtils();
-                        break;
-                    case "jdbcDAO":
-                        generateJDBCDAO();
-                        break;
-                    case "dto":
-                        generateDTO();
-                        break;
-                    case "dbentity":
-                        generateDBEntity();
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                txtProjectName.setText("");
-                JOptionPane.showMessageDialog(this,
-                        new StringBuilder("Only accept NetBeansProjects's project folder.")
-                                .append("\nJava with Ant or Maven is acceptable!").toString());
-            }
+            checkProjectPathBeforeUse(type);
         } else {
-            SAVE_FILE_PATH = new StringBuilder(SAVE_FILE_PATH.substring(0,
-                    SAVE_FILE_PATH.lastIndexOf(SYSTEM_SLASH)))
-                    .append(SYSTEM_SLASH).toString();
-            switch (type) {
-                case "jdbcUtils":
-                    generateJDBCUtils();
-                    break;
-                case "jdbcDAO":
-                    generateJDBCDAO();
-                    break;
-                case "dbentity":
-                    generateDBEntity();
-                    break;
-                default:
-                    generateDTO();
-                    break;
-            }
+            //     System.out.println("check before true: "  + SAVE_FILE_PATH);
+            //    SAVE_FILE_PATH = new StringBuilder(SAVE_FILE_PATH.substring(0,
+            //           SAVE_FILE_PATH.lastIndexOf(SYSTEM_SLASH)))
+            //         .append(SYSTEM_SLASH).toString();
+            //    System.out.println("check true: " + SAVE_FILE_PATH);
+            checkProjectPathBeforeUse(type);
         }
     }
 
@@ -2958,6 +3250,55 @@ public class MainController extends javax.swing.JFrame {
         jTable3.setEnabled(true);
     }//GEN-LAST:event_chkCheckDBConnectionEntityItemStateChanged
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        initSaveDialog("projectPath");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void cbProjectsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProjectsItemStateChanged
+        // TODO add your handling code here:
+        int index = cbProjects.getSelectedIndex();
+        if (index > 0) {
+            String path = pPATH.get(index);
+            if (path.contains("/") && SYSTEM_SLASH.equals("\\")) {
+                path = path.replaceAll("/", SYSTEM_SLASH) + "\\";
+            } else {
+                path += SYSTEM_SLASH;
+            }
+            SAVE_FILE_PATH = path;
+
+            txtProjectName.setText(path);
+        }
+
+    }//GEN-LAST:event_cbProjectsItemStateChanged
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        Properties p = new Properties();
+        p.setProperty("defaultNBPP", txtDefaultNBPP.getText());
+        p.setProperty("theme", String.valueOf(cbTheme.getSelectedItem()));
+        p.setProperty("lang", String.valueOf(cbLang.getSelectedItem()));
+
+        if (chkSaveSQLConnection.isSelected()) {
+            p.setProperty("sqlIP", txtIP.getText());
+            p.setProperty("sqlPort", txtPort.getText());
+            p.setProperty("sqlUsername", txtUsername.getText());
+            p.setProperty("sqlDB", txtDBName.getText());
+            if (chkSavePassword.isSelected()) {
+                p.setProperty("sqlPassword", String.valueOf(txtPassword.getPassword()));
+            }
+        }
+
+        try {
+            OutputStream os = new FileOutputStream("conf.properties");
+            p.store(os, "BangMapleJDBCGenerator");
+            JOptionPane.showMessageDialog(this, "Successfully saved the current configuration file!");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Failed to save the configuration file.\nThe application will now exit.");
+            System.exit(0);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     private void checkEnableCloseConnection() {
         if (!chkConnection.isSelected() && !chkPreparedStatement.isSelected() && !chkResultSet.isSelected()) {
             chkCloseConnection.setSelected(false);
@@ -3241,7 +3582,9 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbFindModifier;
     private javax.swing.JComboBox<String> cbGetAllModifier;
     private javax.swing.JComboBox<String> cbGetConnection;
+    private javax.swing.JComboBox<String> cbLang;
     private javax.swing.JComboBox<String> cbPreparedStatementModifier;
+    private javax.swing.JComboBox<String> cbProjects;
     private javax.swing.JComboBox<String> cbRemoveModifier;
     private javax.swing.JComboBox<String> cbResultSetModifier;
     private javax.swing.JComboBox<String> cbTheme;
@@ -3269,6 +3612,8 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkPublicJDBCDAO;
     private javax.swing.JCheckBox chkRemoveJDBCDAO;
     private javax.swing.JCheckBox chkResultSet;
+    private javax.swing.JCheckBox chkSavePassword;
+    private javax.swing.JCheckBox chkSaveSQLConnection;
     private javax.swing.JCheckBox chkSerializable;
     private javax.swing.JCheckBox chkSerializableDTO;
     private javax.swing.JCheckBox chkSetterConnectionJDBCDAO;
@@ -3277,8 +3622,11 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JCheckBox chkToStringEntity;
     private javax.swing.JCheckBox chkUpdateJDBCDAO;
     private javax.swing.JCheckBox chkgetAllJDBCDAO;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -3293,6 +3641,13 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -3338,6 +3693,7 @@ public class MainController extends javax.swing.JFrame {
     private javax.swing.JTextField txtClassNameJDBC;
     private javax.swing.JTextField txtClassNameJDBCDAO;
     private javax.swing.JTextField txtDBName;
+    private javax.swing.JTextField txtDefaultNBPP;
     private javax.swing.JTextField txtExtendsDTO;
     private javax.swing.JTextField txtGetConnection;
     private javax.swing.JTextField txtIP;
